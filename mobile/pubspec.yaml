@@ -25,6 +25,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 flutter:
   uses-material-design: true
@@ -32,6 +34,9 @@ flutter:
   assets:
     - assets/images/
     - assets/categories/
+    - assets/brand/
+    - assets/banners/
+    - assets/categories/photos/
 
   fonts:
     - family: IBMPlexSansArabic
@@ -44,3 +49,26 @@ flutter:
           weight: 600
         - asset: assets/fonts/IBMPlexSansArabic-Bold.ttf
           weight: 700
+
+# Launcher icons: `dart run flutter_launcher_icons` (sources in brand/).
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: brand/icon_full.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#FA7400"
+  adaptive_icon_foreground: brand/icon_foreground.png
+  adaptive_icon_foreground_inset: 16
+
+# Native splash: `dart run flutter_native_splash:create` (sources in brand/).
+flutter_native_splash:
+  color: "#FA7400"
+  image: brand/splash_mark.png
+  color_dark: "#1C1714"
+  image_dark: brand/splash_mark_dark.png
+  android_12:
+    color: "#FA7400"
+    image: brand/splash_mark_android12.png
+    color_dark: "#1C1714"
+    image_dark: brand/splash_mark_dark_android12.png
+  web: false

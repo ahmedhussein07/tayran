@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/otp_screen.dart';
@@ -9,7 +10,6 @@ import '../../features/onboarding/presentation/address_screen.dart';
 import '../../features/onboarding/presentation/name_screen.dart';
 import '../session/session.dart';
 import '../session/session_controller.dart';
-import '../theme/tokens.dart';
 
 abstract final class Routes {
   static const splash = '/splash';
@@ -64,9 +64,24 @@ String? _signedInRedirect(NextStep step, String location) {
   return location == target ? null : target;
 }
 
+/// Shown while the stored session is read. It continues the native splash exactly (same
+/// colours and mark, same size), so there is no flash between the two.
 class _Splash extends StatelessWidget {
   const _Splash();
 
   @override
-  Widget build(BuildContext context) => ColoredBox(color: context.colors.surface);
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return ColoredBox(
+      color: dark ? const Color(0xFF1C1714) : const Color(0xFFFA7400),
+      child: Center(
+        child: SvgPicture.asset(
+          dark ? 'assets/brand/splash_mark_dark.svg' : 'assets/brand/splash_mark.svg',
+          width: 192, // the native splash image is 768px at xxxhdpi = 192dp
+          height: 192,
+          excludeFromSemantics: true,
+        ),
+      ),
+    );
+  }
 }

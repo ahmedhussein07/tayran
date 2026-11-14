@@ -9,6 +9,7 @@ import '../../../core/widgets/tayran_icon.dart';
 import '../data/bootstrap_repository.dart';
 import 'widgets/address_header.dart';
 import 'widgets/category_tile.dart';
+import 'widgets/promo_carousel.dart';
 import 'widgets/search_field.dart';
 import 'widgets/tayran_tab_bar.dart';
 
@@ -58,10 +59,6 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final s = context.s;
-    final width = MediaQuery.sizeOf(context).width;
-    // Four across inside the 16px gutter, 12px between columns; label under the square tile.
-    final tile = (width - 2 * TayranSpace.s4 - 3 * TayranSpace.s3) / 4;
-
     return RefreshIndicator(
       color: c.ink,
       backgroundColor: c.surfaceRaised,
@@ -80,6 +77,10 @@ class _HomeContent extends ConsumerWidget {
             ),
           ),
           SliverPersistentHeader(pinned: true, delegate: _SearchBand(colors: c, shadows: context.shadows)),
+          SliverPadding(
+            padding: const EdgeInsets.only(top: TayranSpace.s4),
+            sliver: SliverToBoxAdapter(child: PromoCarousel(banners: PromoCarousel.defaults(s))),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s6, TayranSpace.s4, 0),
@@ -102,11 +103,12 @@ class _HomeContent extends ConsumerWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s3, TayranSpace.s4, TayranSpace.s8),
             sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisSpacing: 14,
+              // Three across: tall tiles with the name on top and a product photo underneath.
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: TayranSpace.s3,
                 crossAxisSpacing: TayranSpace.s3,
-                mainAxisExtent: tile + 6 + 16, // square tile, gap, one 16px label line
+                childAspectRatio: 0.78,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, i) {

@@ -6,7 +6,7 @@ import '../../../core/format/digits.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../core/widgets/courier_hero.dart';
+import '../../../core/widgets/brand_mark.dart';
 import '../../../core/widgets/flow_scaffold.dart';
 import '../../../core/widgets/phone_field.dart';
 import '../../../core/widgets/tayran_button.dart';
@@ -80,7 +80,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: TayranSpace.s8),
-          CourierHero(semanticLabel: s.courierAlt),
+          BrandHero(semanticLabel: s.brandAlt),
           const SizedBox(height: TayranSpace.s3),
           FlowHeading(
             center: true,

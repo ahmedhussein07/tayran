@@ -28,7 +28,7 @@ class S {
   // Phone
   String get welcomeTitle => _get('welcomeTitle');
   String get welcomeSub => _get('welcomeSub');
-  String get courierAlt => _get('courierAlt');
+  String get brandAlt => _get('brandAlt');
   String get phoneLabel => _get('phoneLabel');
   String get phoneInvalid => _get('phoneInvalid');
   String get sendCode => _get('sendCode');
@@ -100,6 +100,8 @@ class S {
   String get tabOrders => _get('tabOrders');
   String get tabAccount => _get('tabAccount');
   String get homeFailed => _get('homeFailed');
+  String get bannerDelivery => _get('bannerDelivery');
+  String get bannerBreakfast => _get('bannerBreakfast');
 
   /// Maps the backend's stable error codes to friendly copy.
   String error(String? code) => _get(switch (code) {
@@ -120,7 +122,7 @@ class S {
 const _ar = <String, String>{
   'welcomeTitle': 'أهلًا بيك في طيران',
   'welcomeSub': 'دخّل رقم موبايلك وهنبعتلك كود',
-  'courierAlt': 'طيّار طيران على الموتوسيكل',
+  'brandAlt': 'شعار طيران',
   'phoneLabel': 'رقم الموبايل',
   'phoneInvalid': 'الرقم مش صحيح',
   'sendCode': 'ابعتلي الكود',
@@ -182,6 +184,8 @@ const _ar = <String, String>{
   'tabOrders': 'طلباتي',
   'tabAccount': 'حسابي',
   'homeFailed': 'معرفناش نحمّل الصفحة',
+  'bannerDelivery': 'طلبك طاير لك: كل حاجات البيت، من غير ما تتحرك من مكانك',
+  'bannerBreakfast': 'فطارك في دقايق: عيش بلدي، جبنة، بيض ولبن على باب البيت',
   'errOtpExpired': 'الكود خلص وقته، اطلب كود جديد',
   'errOtpTooMany': 'جربت كتير، اطلب كود جديد',
   'errResendTooSoon': 'استنى شوية قبل ما تطلب كود تاني',
@@ -196,7 +200,7 @@ const _ar = <String, String>{
 const _en = <String, String>{
   'welcomeTitle': 'Welcome to Tayran',
   'welcomeSub': 'Enter your mobile number and we\'ll text you a code',
-  'courierAlt': 'A Tayran courier on a scooter',
+  'brandAlt': 'Tayran logo',
   'phoneLabel': 'Mobile number',
   'phoneInvalid': 'That number doesn\'t look right',
   'sendCode': 'Send me the code',
@@ -258,6 +262,8 @@ const _en = <String, String>{
   'tabOrders': 'Orders',
   'tabAccount': 'Account',
   'homeFailed': 'We couldn\'t load this page',
+  'bannerDelivery': 'Your order flies to you: everything for home, without leaving it',
+  'bannerBreakfast': 'Breakfast in minutes: baladi bread, cheese, eggs and milk at your door',
   'errOtpExpired': 'The code has expired, request a new one',
   'errOtpTooMany': 'Too many tries, request a new code',
   'errResendTooSoon': 'Please wait a moment before asking again',
