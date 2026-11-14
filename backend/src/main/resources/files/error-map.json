@@ -1,0 +1,15 @@
+[
+  { "errorKey": "INVALID_PHONE", "httpStatus": 400, "messageAr": "الرقم مش صحيح", "messageEn": "Invalid Egyptian mobile number" },
+  { "errorKey": "OTP_INVALID", "httpStatus": 400, "messageAr": "الكود غلط، جرب تاني", "messageEn": "Wrong code, try again" },
+  { "errorKey": "OTP_EXPIRED", "httpStatus": 400, "messageAr": "الكود خلص وقته، اطلب كود جديد", "messageEn": "The code has expired, request a new one" },
+  { "errorKey": "OTP_TOO_MANY_ATTEMPTS", "httpStatus": 400, "messageAr": "جربت كتير، اطلب كود جديد", "messageEn": "Too many attempts, request a new code" },
+  { "errorKey": "OTP_RESEND_TOO_SOON", "httpStatus": 429, "messageAr": "استنى شوية قبل ما تطلب كود تاني", "messageEn": "Please wait before requesting another code" },
+  { "errorKey": "OTP_RATE_LIMITED", "httpStatus": 429, "messageAr": "طلبت أكواد كتير، جرب بعد شوية", "messageEn": "Too many code requests, try again later" },
+  { "errorKey": "VALIDATION_ERROR", "httpStatus": 400, "messageAr": "راجع البيانات وجرب تاني", "messageEn": "Some fields are invalid" },
+  { "errorKey": "INVALID_STREET", "httpStatus": 400, "messageAr": "الشارع ده مش في البلد اللي اخترتها", "messageEn": "The street does not belong to the chosen village" },
+  { "errorKey": "UNAUTHORIZED", "httpStatus": 401, "messageAr": "لازم تسجل دخول الأول", "messageEn": "Unauthorized request" },
+  { "errorKey": "TOKEN_EXPIRED", "httpStatus": 401, "messageAr": "الجلسة خلصت، سجل دخول تاني", "messageEn": "The token has expired" },
+  { "errorKey": "NOT_FOUND", "httpStatus": 404, "messageAr": "مش لاقيين اللي بتدور عليه", "messageEn": "Not found" },
+  { "errorKey": "METHOD_NOT_ALLOWED", "httpStatus": 405, "messageAr": "الطلب ده مش مسموح", "messageEn": "Method not allowed" },
+  { "errorKey": "INTERNAL_ERROR", "httpStatus": 500, "messageAr": "حصلت مشكلة، جرب تاني", "messageEn": "Something went wrong" }
+]

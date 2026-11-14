@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tayran-postgres
+    environment:
+      POSTGRES_DB: tayran
+      POSTGRES_USER: tayran
+      POSTGRES_PASSWORD: tayran
+    ports:
+      - "5433:5432"   # 5433 on the host, so it never clashes with a locally installed PostgreSQL
+    volumes:
+      - tayran-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tayran -d tayran"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  tayran-pgdata:
