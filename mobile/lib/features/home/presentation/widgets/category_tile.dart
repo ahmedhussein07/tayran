@@ -3,8 +3,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/theme/tokens.dart';
 
-/// A tall category tile on its own pastel: the name at the top, a product photo filling the
-/// bottom. Falls back to the category illustration when no photo is bundled yet.
+/// The design's CategoryTile: a square tile on the category's pastel, with the name under it in
+/// navy (never on the pastel). Shows the category photo when one is bundled, otherwise the
+/// category illustration at 76%.
 class CategoryTile extends StatefulWidget {
   const CategoryTile({super.key, required this.label, required this.iconKey, required this.colorToken, this.onTap});
 
@@ -20,7 +21,8 @@ class CategoryTile extends StatefulWidget {
 
   static const illustrations = {'produce', 'bread', 'dairy', 'chicken', 'chips', 'juice', 'spray', 'pump'};
 
-  /// Categories that have a bundled photo (sources in brand/PHOTO_CREDITS.md).
+  /// Categories that have a bundled photo (sources in brand/PHOTO_CREDITS.md). Stand-ins until
+  /// catalogue cut-outs exist: these have their own backgrounds, so they fill the tile.
   static const photos = {'produce', 'bread', 'dairy', 'chicken', 'chips', 'juice', 'spray', 'pump'};
 
   @override
@@ -38,9 +40,10 @@ class _CategoryTileState extends State<CategoryTile> {
     if (CategoryTile.photos.contains(key)) {
       art = Image.asset('assets/categories/photos/$key.jpg', fit: BoxFit.cover, width: double.infinity, height: double.infinity);
     } else if (CategoryTile.illustrations.contains(key)) {
-      art = Padding(
-        padding: const EdgeInsets.fromLTRB(TayranSpace.s4, 0, TayranSpace.s4, TayranSpace.s3),
-        child: SvgPicture.asset('assets/categories/$key.svg', fit: BoxFit.contain, alignment: Alignment.bottomCenter),
+      art = FractionallySizedBox(
+        widthFactor: .76,
+        heightFactor: .76,
+        child: SvgPicture.asset('assets/categories/$key.svg', fit: BoxFit.contain),
       );
     } else {
       art = const SizedBox.shrink();
@@ -56,36 +59,34 @@ class _CategoryTileState extends State<CategoryTile> {
         onTapDown: (_) => setState(() => _pressed = true),
         onTapUp: (_) => setState(() => _pressed = false),
         onTapCancel: () => setState(() => _pressed = false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1,
-          duration: const Duration(milliseconds: 120),
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: c.pastel(widget.colorToken),
-              borderRadius: BorderRadius.circular(TayranRadius.lg),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(TayranSpace.s2, TayranSpace.s3, TayranSpace.s2, TayranSpace.s2),
-                  child: SizedBox(
-                    // Room for two lines so one- and two-line names keep the photos aligned.
-                    height: 40,
-                    child: Text(
-                      widget.label,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: TayranTypography.label.copyWith(color: c.ink),
-                    ),
+        child: Column(
+          children: [
+            // .ty-cat:active .ty-cat__art { transform: scale(.96) }
+            AnimatedScale(
+              scale: _pressed ? 0.96 : 1,
+              duration: const Duration(milliseconds: 120),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: c.pastel(widget.colorToken),
+                    borderRadius: BorderRadius.circular(TayranRadius.md),
                   ),
+                  child: art,
                 ),
-                Expanded(child: art),
-              ],
+              ),
             ),
-          ),
+            const SizedBox(height: 6),
+            Text(
+              widget.label,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TayranTypography.caption.copyWith(color: c.ink, fontWeight: FontWeight.w600, height: 16 / 12),
+            ),
+          ],
         ),
       ),
     );

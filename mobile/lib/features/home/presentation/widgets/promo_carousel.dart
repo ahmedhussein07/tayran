@@ -12,24 +12,30 @@ class PromoBanner {
   final String semanticLabel;
 }
 
-/// Home banners: swipeable, the next one peeks in at the edge, with page dots underneath.
-/// Banners are images only: no buttons and no tap action.
+/// Home banners, built like the design's PromoCarousel: a horizontal track inside the 16px
+/// gutter, slides 18px narrower than the screen so the next one peeks in, a free swipe that
+/// snaps each slide to the gutter, and dots underneath. Images only: no buttons, no tap action.
 class PromoCarousel extends StatefulWidget {
   const PromoCarousel({super.key, required this.banners});
 
   final List<PromoBanner> banners;
 
-  /// The two Phase 1 banners, bundled with the app. Rendered at 3x from brand/banners/*.html.
+  /// The Phase 1 banners, in order. Rendered at 3x from brand/banners/*.html.
   static List<PromoBanner> defaults(S s) => [
+        PromoBanner(
+          lightAsset: 'assets/banners/banner_breakfast_light.png',
+          darkAsset: 'assets/banners/banner_breakfast_dark.png',
+          semanticLabel: s.bannerBreakfast,
+        ),
         PromoBanner(
           lightAsset: 'assets/banners/banner_delivery_light.png',
           darkAsset: 'assets/banners/banner_delivery_dark.png',
           semanticLabel: s.bannerDelivery,
         ),
         PromoBanner(
-          lightAsset: 'assets/banners/banner_breakfast_light.png',
-          darkAsset: 'assets/banners/banner_breakfast_dark.png',
-          semanticLabel: s.bannerBreakfast,
+          lightAsset: 'assets/banners/banner_payment_light.png',
+          darkAsset: 'assets/banners/banner_payment_dark.png',
+          semanticLabel: s.bannerPayment,
         ),
       ];
 
@@ -38,31 +44,32 @@ class PromoCarousel extends StatefulWidget {
 }
 
 class _PromoCarouselState extends State<PromoCarousel> {
-  /// The banner artwork is 344 x 160.
-  static const _aspect = 344 / 160;
+  /// .ty-carousel__slide: calc(100% - 2 * space-4 - 18px).
+  static const _peek = 18.0;
   static const _gap = TayranSpace.s3;
 
-  PageController? _controller;
-  double _viewportFraction = 0;
-  int _page = 0;
+  /// The banner artwork is 340 x 152 (the design's slide on a 390px screen).
+  static const _aspect = 340 / 152;
+
+  final _controller = ScrollController();
+  double _itemExtent = 1;
+  int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final i = (_controller.offset / _itemExtent).round().clamp(0, widget.banners.length - 1);
+    if (i != _index) setState(() => _index = i);
+  }
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _controller.dispose();
     super.dispose();
-  }
-
-  PageController _controllerFor(double width) {
-    // Each page is one card plus the gap after it; what's left shows the next card peeking in.
-    final cardWidth = width - TayranSpace.s4 - 40;
-    final fraction = (cardWidth + _gap) / width;
-    if (_controller == null || (fraction - _viewportFraction).abs() > 0.001) {
-      final old = _controller;
-      _controller = PageController(viewportFraction: fraction, initialPage: _page);
-      _viewportFraction = fraction;
-      if (old != null) WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
-    }
-    return _controller!;
   }
 
   @override
@@ -73,42 +80,34 @@ class _PromoCarouselState extends State<PromoCarousel> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final controller = _controllerFor(width);
-        final cardWidth = width * _viewportFraction - _gap;
-        final height = cardWidth / _aspect;
+        final slideWidth = constraints.maxWidth - 2 * TayranSpace.s4 - _peek;
+        _itemExtent = slideWidth + _gap;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: height,
-              child: PageView.builder(
-                controller: controller,
-                padEnds: false,
+              height: slideWidth / _aspect,
+              child: ListView.separated(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4),
+                physics: _SnapToItemPhysics(itemExtent: _itemExtent),
                 itemCount: banners.length,
-                onPageChanged: (i) => setState(() => _page = i),
-                itemBuilder: (context, i) {
-                  final banner = banners[i];
-                  return Padding(
-                    // The first card starts at the screen gutter; every card has the gap after it.
-                    padding: EdgeInsetsDirectional.only(start: i == 0 ? TayranSpace.s4 : 0, end: _gap),
-                    child: Semantics(
-                      image: true,
-                      label: banner.semanticLabel,
-                      excludeSemantics: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(TayranRadius.lg),
-                        child: Image.asset(
-                          dark ? banner.darkAsset : banner.lightAsset,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      ),
+                separatorBuilder: (_, _) => const SizedBox(width: _gap),
+                itemBuilder: (context, i) => Semantics(
+                  image: true,
+                  label: banners[i].semanticLabel,
+                  excludeSemantics: true,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(TayranRadius.lg),
+                    child: Image.asset(
+                      dark ? banners[i].darkAsset : banners[i].lightAsset,
+                      width: slideWidth,
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ),
             if (banners.length > 1) ...[
@@ -116,17 +115,19 @@ class _PromoCarouselState extends State<PromoCarousel> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 0; i < banners.length; i++)
+                  for (var i = 0; i < banners.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 6),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      width: i == _page ? 16 : 6,
+                      curve: Curves.ease,
+                      width: i == _index ? 20 : 6,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: i == _page ? c.ink : c.lineStrong.withValues(alpha: .5),
+                        color: i == _index ? c.ink : c.lineStrong,
                         borderRadius: BorderRadius.circular(TayranRadius.full),
                       ),
                     ),
+                  ],
                 ],
               ),
             ],
@@ -135,4 +136,41 @@ class _PromoCarouselState extends State<PromoCarousel> {
       },
     );
   }
+}
+
+/// Scroll-snap like CSS `scroll-snap-type: x mandatory` with `scroll-snap-align: start`:
+/// a fling or drag settles with the nearest slide aligned to the gutter.
+class _SnapToItemPhysics extends ScrollPhysics {
+  const _SnapToItemPhysics({required this.itemExtent, super.parent});
+
+  final double itemExtent;
+
+  @override
+  _SnapToItemPhysics applyTo(ScrollPhysics? ancestor) =>
+      _SnapToItemPhysics(itemExtent: itemExtent, parent: buildParent(ancestor));
+
+  double _targetFor(ScrollMetrics position, Tolerance tolerance, double velocity) {
+    var item = position.pixels / itemExtent;
+    if (velocity < -tolerance.velocity) {
+      item -= 0.5;
+    } else if (velocity > tolerance.velocity) {
+      item += 0.5;
+    }
+    return (item.roundToDouble() * itemExtent).clamp(position.minScrollExtent, position.maxScrollExtent);
+  }
+
+  @override
+  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+    if ((velocity <= 0 && position.pixels <= position.minScrollExtent) ||
+        (velocity >= 0 && position.pixels >= position.maxScrollExtent)) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    final tolerance = toleranceFor(position);
+    final target = _targetFor(position, tolerance, velocity);
+    if ((target - position.pixels).abs() < tolerance.distance) return null;
+    return ScrollSpringSimulation(spring, position.pixels, target, velocity, tolerance: tolerance);
+  }
+
+  @override
+  bool get allowImplicitScrolling => false;
 }

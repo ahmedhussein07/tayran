@@ -102,6 +102,7 @@ class S {
   String get homeFailed => _get('homeFailed');
   String get bannerDelivery => _get('bannerDelivery');
   String get bannerBreakfast => _get('bannerBreakfast');
+  String get bannerPayment => _get('bannerPayment');
 
   /// Maps the backend's stable error codes to friendly copy.
   String error(String? code) => _get(switch (code) {
@@ -186,6 +187,7 @@ const _ar = <String, String>{
   'homeFailed': 'معرفناش نحمّل الصفحة',
   'bannerDelivery': 'طلبك طاير لك: كل حاجات البيت، من غير ما تتحرك من مكانك',
   'bannerBreakfast': 'فطارك في دقايق: عيش بلدي، جبنة، بيض ولبن على باب البيت',
+  'bannerPayment': 'ادفع بالفيزا أو المحفظة: آمن وسريع، أو كاش لما الطلب يوصل',
   'errOtpExpired': 'الكود خلص وقته، اطلب كود جديد',
   'errOtpTooMany': 'جربت كتير، اطلب كود جديد',
   'errResendTooSoon': 'استنى شوية قبل ما تطلب كود تاني',
@@ -264,6 +266,7 @@ const _en = <String, String>{
   'homeFailed': 'We couldn\'t load this page',
   'bannerDelivery': 'Your order flies to you: everything for home, without leaving it',
   'bannerBreakfast': 'Breakfast in minutes: baladi bread, cheese, eggs and milk at your door',
+  'bannerPayment': 'Pay by Visa or wallet: safe and fast, or cash on delivery',
   'errOtpExpired': 'The code has expired, request a new one',
   'errOtpTooMany': 'Too many tries, request a new code',
   'errResendTooSoon': 'Please wait a moment before asking again',
