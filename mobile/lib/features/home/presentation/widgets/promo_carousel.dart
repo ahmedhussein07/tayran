@@ -13,8 +13,10 @@ class PromoBanner {
 }
 
 /// Home banners, built like the design's PromoCarousel: a horizontal track inside the 16px
-/// gutter, slides 18px narrower than the screen so the next one peeks in, a free swipe that
-/// snaps each slide to the gutter, and dots underneath. Images only: no buttons, no tap action.
+/// gutter, a free swipe that snaps each slide to the gutter, and dots underneath.
+/// It runs left to right even in Arabic: the first banner starts at the left edge, the next one
+/// peeks in from the right, and you swipe right to left to move on. Images only: no buttons,
+/// no tap action.
 class PromoCarousel extends StatefulWidget {
   const PromoCarousel({super.key, required this.banners});
 
@@ -22,30 +24,30 @@ class PromoCarousel extends StatefulWidget {
 
   /// The Phase 1 banners, in order. Rendered at 3x from brand/banners/*.html.
   static List<PromoBanner> defaults(S s) => [
-        PromoBanner(
-          lightAsset: 'assets/banners/banner_breakfast_light.png',
-          darkAsset: 'assets/banners/banner_breakfast_dark.png',
-          semanticLabel: s.bannerBreakfast,
-        ),
-        PromoBanner(
-          lightAsset: 'assets/banners/banner_delivery_light.png',
-          darkAsset: 'assets/banners/banner_delivery_dark.png',
-          semanticLabel: s.bannerDelivery,
-        ),
-        PromoBanner(
-          lightAsset: 'assets/banners/banner_payment_light.png',
-          darkAsset: 'assets/banners/banner_payment_dark.png',
-          semanticLabel: s.bannerPayment,
-        ),
-      ];
+    PromoBanner(
+      lightAsset: 'assets/banners/banner_breakfast_light.png',
+      darkAsset: 'assets/banners/banner_breakfast_dark.png',
+      semanticLabel: s.bannerBreakfast,
+    ),
+    PromoBanner(
+      lightAsset: 'assets/banners/banner_delivery_light.png',
+      darkAsset: 'assets/banners/banner_delivery_dark.png',
+      semanticLabel: s.bannerDelivery,
+    ),
+    PromoBanner(
+      lightAsset: 'assets/banners/banner_payment_light.png',
+      darkAsset: 'assets/banners/banner_payment_dark.png',
+      semanticLabel: s.bannerPayment,
+    ),
+  ];
 
   @override
   State<PromoCarousel> createState() => _PromoCarouselState();
 }
 
 class _PromoCarouselState extends State<PromoCarousel> {
-  /// .ty-carousel__slide: calc(100% - 2 * space-4 - 18px).
-  static const _peek = 18.0;
+  /// How much of the next banner shows at the edge.
+  static const _peek = 40.0;
   static const _gap = TayranSpace.s3;
 
   /// The banner artwork is 340 x 152 (the design's slide on a 390px screen).
@@ -80,7 +82,8 @@ class _PromoCarouselState extends State<PromoCarousel> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final slideWidth = constraints.maxWidth - 2 * TayranSpace.s4 - _peek;
+        // Gutter, slide, gap, then the visible part of the next slide.
+        final slideWidth = constraints.maxWidth - TayranSpace.s4 - _gap - _peek;
         _itemExtent = slideWidth + _gap;
 
         return Column(
@@ -88,23 +91,26 @@ class _PromoCarouselState extends State<PromoCarousel> {
           children: [
             SizedBox(
               height: slideWidth / _aspect,
-              child: ListView.separated(
-                controller: _controller,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4),
-                physics: _SnapToItemPhysics(itemExtent: _itemExtent),
-                itemCount: banners.length,
-                separatorBuilder: (_, _) => const SizedBox(width: _gap),
-                itemBuilder: (context, i) => Semantics(
-                  image: true,
-                  label: banners[i].semanticLabel,
-                  excludeSemantics: true,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(TayranRadius.lg),
-                    child: Image.asset(
-                      dark ? banners[i].darkAsset : banners[i].lightAsset,
-                      width: slideWidth,
-                      fit: BoxFit.cover,
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: ListView.separated(
+                  controller: _controller,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4),
+                  physics: _SnapToItemPhysics(itemExtent: _itemExtent),
+                  itemCount: banners.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: _gap),
+                  itemBuilder: (context, i) => Semantics(
+                    image: true,
+                    label: banners[i].semanticLabel,
+                    excludeSemantics: true,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(TayranRadius.lg),
+                      child: Image.asset(
+                        dark ? banners[i].darkAsset : banners[i].lightAsset,
+                        width: slideWidth,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -114,6 +120,8 @@ class _PromoCarouselState extends State<PromoCarousel> {
               const SizedBox(height: TayranSpace.s3),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                // Dots follow the track: first banner on the left.
+                textDirection: TextDirection.ltr,
                 children: [
                   for (var i = 0; i < banners.length; i++) ...[
                     if (i > 0) const SizedBox(width: 6),

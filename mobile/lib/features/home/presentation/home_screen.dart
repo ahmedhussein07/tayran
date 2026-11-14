@@ -73,10 +73,17 @@ class _HomeContent extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Container(
               color: c.headerBg,
-              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, 4, TayranSpace.s4, TayranSpace.s3),
-              child: AddressHeader(
-                address: data.address?.label(s.isArabic) ?? '',
-                etaText: data.etaText,
+              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s2, TayranSpace.s4, TayranSpace.s3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _Greeting(firstName: data.firstName),
+                  const SizedBox(height: TayranSpace.s2),
+                  AddressHeader(
+                    address: data.address?.label(s.isArabic) ?? '',
+                    etaText: data.etaText,
+                  ),
+                ],
               ),
             ),
           ),
@@ -129,6 +136,35 @@ class _HomeContent extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "أهلًا أحمد" with the waving hand: the one place the app speaks to the customer by name.
+class _Greeting extends StatelessWidget {
+  const _Greeting({required this.firstName});
+
+  final String? firstName;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final s = context.s;
+    final name = firstName?.trim();
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            name == null || name.isEmpty ? s.greetingNoName : s.greeting(name),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            // The design's display style is reserved for the greeting, once per screen.
+            style: TayranTypography.display.copyWith(color: c.ink),
+          ),
+        ),
+        const SizedBox(width: TayranSpace.s2),
+        TayranIcon('wave', size: 28, color: c.ink),
+      ],
     );
   }
 }

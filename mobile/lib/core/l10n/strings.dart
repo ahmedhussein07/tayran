@@ -88,6 +88,8 @@ class S {
   String get locationsFailed => _get('locationsFailed');
 
   // Home
+  String greeting(String name) => _get('greeting', {'name': name});
+  String get greetingNoName => _get('greetingNoName');
   String get deliverTo => _get('deliverTo');
   String etaBadge(String etaText) => _get('etaBadge', {'eta': etaText});
   String get search => _get('search');
@@ -173,6 +175,8 @@ const _ar = <String, String>{
   'noResults': 'مفيش نتايج لـ "{q}"',
   'letsStart': 'يلا نبدأ',
   'locationsFailed': 'معرفناش نجيب البلاد، جرب تاني',
+  'greeting': 'أهلًا {name}',
+  'greetingNoName': 'أهلًا بيك',
   'deliverTo': 'التوصيل إلى',
   'etaBadge': 'التوصيل خلال {eta}',
   'search': 'دوّر على عيش، لبن، فاكهة…',
@@ -252,6 +256,8 @@ const _en = <String, String>{
   'noResults': 'No results for "{q}"',
   'letsStart': 'Let\'s go',
   'locationsFailed': 'We couldn\'t load the villages, try again',
+  'greeting': 'Hi {name}',
+  'greetingNoName': 'Hi there',
   'deliverTo': 'Deliver to',
   'etaBadge': 'Delivery in {eta}',
   'search': 'Search bread, milk, fruit…',
