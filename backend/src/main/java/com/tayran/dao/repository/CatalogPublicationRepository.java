@@ -6,9 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CatalogPublicationRepository extends JpaRepository<CatalogPublication, CatalogPublication.Key> {
 
     List<CatalogPublication> findByIdStoreIdAndDeletedAtIsNullAndPublishedAtBefore(Long storeId, Instant before);
+
+    Optional<CatalogPublication> findFirstByIdStoreIdOrderByPublishedAtDesc(Long storeId);
 }

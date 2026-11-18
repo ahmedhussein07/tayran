@@ -168,6 +168,35 @@ class PageResult<T> {
   );
 }
 
+/// The published catalog: what the customer app is on, and whether edits are waiting.
+class CatalogStatus {
+  const CatalogStatus({
+    required this.version,
+    required this.publishedAt,
+    required this.pendingChanges,
+    required this.storage,
+    required this.publishIntervalSeconds,
+  });
+
+  final int version;
+  final DateTime? publishedAt;
+  final bool pendingChanges;
+
+  /// LOCAL (dev files on the backend machine) or R2.
+  final String storage;
+  final int publishIntervalSeconds;
+
+  factory CatalogStatus.fromJson(Map json) => CatalogStatus(
+    version: (json['version'] as num).toInt(),
+    publishedAt: json['publishedAt'] == null
+        ? null
+        : DateTime.parse(json['publishedAt'] as String).toLocal(),
+    pendingChanges: json['pendingChanges'] as bool,
+    storage: json['storage'] as String,
+    publishIntervalSeconds: (json['publishIntervalSeconds'] as num).toInt(),
+  );
+}
+
 /// An uploaded image: the hash to send with the category / product, and the preview to show.
 class UploadedImage {
   const UploadedImage({

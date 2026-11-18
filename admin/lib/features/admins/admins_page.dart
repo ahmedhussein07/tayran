@@ -28,8 +28,8 @@ class _AdminsPageState extends ConsumerState<AdminsPage> {
   }
 
   void _load() => setState(() {
-        _future = _api.admins();
-      });
+    _future = _api.admins();
+  });
 
   Future<void> _open(Widget dialog) async {
     final changed = await showDialog<bool>(

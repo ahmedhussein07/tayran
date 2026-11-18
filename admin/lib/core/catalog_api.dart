@@ -124,6 +124,15 @@ class CatalogApi {
 
   Future<void> deleteProduct(int id) => _api.delete('/admin/products/$id');
 
+  // ---- publishing -----------------------------------------------------------------------
+
+  Future<CatalogStatus> catalogStatus() async =>
+      CatalogStatus.fromJson(await _api.get('/admin/catalog/status') as Map);
+
+  Future<CatalogStatus> publishNow() async => CatalogStatus.fromJson(
+    await _api.post('/admin/catalog/publish', const {}) as Map,
+  );
+
   // ---- admins ----------------------------------------------------------------------------
 
   Future<List<AdminUser>> admins() async =>

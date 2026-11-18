@@ -7,6 +7,7 @@ import '../../core/api/api_exception.dart';
 import '../../core/catalog_api.dart';
 import '../../core/models.dart';
 import '../../core/widgets/common.dart';
+import '../../core/widgets/publish_bar.dart';
 import 'categories_page.dart' show publishNote;
 
 class SubcategoriesPage extends ConsumerStatefulWidget {
@@ -134,6 +135,7 @@ class _SubcategoriesPageState extends ConsumerState<SubcategoriesPage> {
                 ],
               ),
             ),
+            const PublishBar(),
             Expanded(
               child: _items.isEmpty
                   ? const Center(child: Text('لا توجد أقسام فرعية بعد.'))

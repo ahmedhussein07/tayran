@@ -53,7 +53,8 @@ class CatalogPublisherTest {
         when(txManager.getTransaction(any())).thenReturn(new SimpleTransactionStatus());
         events = mock(ApplicationEventPublisher.class);
         publisher = new CatalogPublisher(stores, publications, storage, mock(JdbcTemplate.class), JsonMapper.builder().build(),
-                txManager, events, Clock.fixed(NOW, ZoneOffset.UTC), false);
+                txManager, events, Clock.fixed(NOW, ZoneOffset.UTC), false, Duration.ofSeconds(90),
+                new com.tayran.config.properties.StorageProperties("https://cdn.example", null));
 
         store = new Store();
         store.setId(1L);
@@ -116,6 +117,25 @@ class CatalogPublisherTest {
 
         verify(storage).delete("catalog/store-1/v1.json");
         assertThat(old.getDeletedAt()).isEqualTo(NOW);
+    }
+
+    @Test
+    void statusShowsPendingChangesUntilPublishedThenTheLiveVersion() {
+        when(stores.findById(1L)).thenReturn(Optional.of(store));
+        CatalogPublisher.CatalogStatus before = publisher.status(1L);
+        assertThat(before.version()).isEqualTo(4);
+        assertThat(before.pendingChanges()).isTrue();
+        assertThat(before.storage()).isEqualTo("R2"); // a mocked ObjectStorage is not the local one
+        assertThat(before.publishIntervalSeconds()).isEqualTo(90);
+
+        publisher.publish(1L);
+        when(publications.findFirstByIdStoreIdOrderByPublishedAtDesc(1L)).thenReturn(Optional.of(
+                new CatalogPublication(new CatalogPublication.Key(1L, 5), "catalog/store-1/v5.json", NOW, null)));
+        CatalogPublisher.CatalogStatus after = publisher.status(1L);
+        assertThat(after.version()).isEqualTo(5);
+        assertThat(after.pendingChanges()).isFalse();
+        assertThat(after.publishedAt()).isEqualTo(NOW);
+        assertThat(after.catalogUrl()).isEqualTo("https://cdn.example/catalog/store-1/v5.json");
     }
 
     @Test

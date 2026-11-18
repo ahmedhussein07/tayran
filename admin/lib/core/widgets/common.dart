@@ -192,6 +192,9 @@ class ImageThumb extends StatelessWidget {
           : Image.network(
               url!,
               fit: BoxFit.contain,
+              // The CDN (an R2 public bucket) may not send CORS headers; then the browser shows
+              // the image as an <img> element instead of failing the fetch.
+              webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
               errorBuilder: (_, _, _) => Icon(
                 Icons.broken_image_outlined,
                 size: size * 0.45,

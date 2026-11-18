@@ -7,6 +7,7 @@ import 'package:tayran_ui/tayran_ui.dart';
 import '../../core/catalog_api.dart';
 import '../../core/models.dart';
 import '../../core/widgets/common.dart';
+import '../../core/widgets/publish_bar.dart';
 import '../categories/categories_page.dart' show publishNote;
 import 'product_dialog.dart';
 
@@ -157,6 +158,7 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
             size: TayranButtonSize.sm,
           ),
         ),
+        const PublishBar(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s6),
           child: Wrap(

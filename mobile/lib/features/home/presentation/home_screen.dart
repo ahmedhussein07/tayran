@@ -46,7 +46,10 @@ class HomeScreen extends ConsumerWidget {
             ),
             Expanded(
               child: switch (bootstrap) {
-                AsyncData(:final value) => _HomeContent(data: value),
+                // Keep showing the last bootstrap while a refresh (e.g. on resume) runs.
+                _ when bootstrap.value != null => _HomeContent(
+                  data: bootstrap.value!,
+                ),
                 AsyncError() when !bootstrap.isLoading => _HomeError(
                   onRetry: () => ref.invalidate(bootstrapProvider),
                 ),

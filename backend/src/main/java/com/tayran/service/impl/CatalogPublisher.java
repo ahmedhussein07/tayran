@@ -44,6 +44,14 @@ public class CatalogPublisher {
     public record CatalogPublished(long storeId, int version) {
     }
 
+    /**
+     * What the admin portal shows: the live version, when it went out, whether edits are waiting
+     * for the next run, and where files are stored (LOCAL in dev, R2 in production).
+     */
+    public record CatalogStatus(long store, int version, Instant publishedAt, boolean pendingChanges, String storage,
+                                long publishIntervalSeconds, String catalogUrl) {
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record CatalogJson(int v, long store, List<CategoryJson> categories, List<SubcategoryJson> subcategories,
                               List<ProductJson> products) {
@@ -89,12 +97,16 @@ public class CatalogPublisher {
     private final ApplicationEventPublisher events;
     private final Clock clock;
     private final boolean publishOnStartup;
+    private final Duration publishInterval;
+    private final com.tayran.config.properties.StorageProperties storageProperties;
 
     public CatalogPublisher(StoreRepository storeRepository, CatalogPublicationRepository publicationRepository, ObjectStorage storage,
                             JdbcTemplate jdbc, ObjectMapper objectMapper,
                             org.springframework.transaction.PlatformTransactionManager transactionManager,
                             ApplicationEventPublisher events, Clock clock,
-                            @Value("${app.catalog-publish-on-startup:false}") boolean publishOnStartup) {
+                            @Value("${app.catalog-publish-on-startup:false}") boolean publishOnStartup,
+                            @Value("${app.catalog-publish-interval:90s}") Duration publishInterval,
+                            com.tayran.config.properties.StorageProperties storageProperties) {
         this.storeRepository = storeRepository;
         this.publicationRepository = publicationRepository;
         this.storage = storage;
@@ -104,6 +116,23 @@ public class CatalogPublisher {
         this.events = events;
         this.clock = clock;
         this.publishOnStartup = publishOnStartup;
+        this.publishInterval = publishInterval;
+        this.storageProperties = storageProperties;
+    }
+
+    /** The store's catalog status for the admin portal. */
+    public CatalogStatus status(long storeId) {
+        Store store = storeRepository.findById(storeId).orElseThrow();
+        Instant publishedAt = publicationRepository.findFirstByIdStoreIdOrderByPublishedAtDesc(storeId)
+                .map(CatalogPublication::getPublishedAt).orElse(null);
+        String url = store.getCatalogVersion() > 0 ? storageProperties.url(key(storeId, store.getCatalogVersion())) : null;
+        return new CatalogStatus(storeId, store.getCatalogVersion(), publishedAt, store.isCatalogDirty(), storageName(),
+                publishInterval.toSeconds(), url);
+    }
+
+    /** "LOCAL" (dev files served at /cdn) or "R2". */
+    String storageName() {
+        return storage instanceof com.tayran.integration.storage.LocalFileStorage ? "LOCAL" : "R2";
     }
 
     @EventListener(ApplicationReadyEvent.class)

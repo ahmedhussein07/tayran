@@ -7,6 +7,7 @@ import '../../core/api/api_exception.dart';
 import '../../core/catalog_api.dart';
 import '../../core/models.dart';
 import '../../core/widgets/common.dart';
+import '../../core/widgets/publish_bar.dart';
 
 /// The customer app shows changes after the next catalog publish.
 const publishNote = 'التغييرات تظهر في التطبيق خلال دقيقتين تقريبًا.';
@@ -106,6 +107,7 @@ class _CategoriesPageState extends ConsumerState<CategoriesPage> {
             size: TayranButtonSize.sm,
           ),
         ),
+        const PublishBar(),
         Expanded(
           child: AsyncBody<List<CategoryItem>>(
             future: _future,

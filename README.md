@@ -60,6 +60,33 @@ cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 Run with the `r2` profile and set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` and (optionally) `R2_ENDPOINT`. Set `CDN_BASE_URL` to the bucket's public/CDN URL. Image variants and catalog files are written with `Cache-Control: public, max-age=31536000, immutable`.
 
+### Using your R2 bucket from a dev run
+
+The `dev` profile alone stores images and catalog files in `backend/.local-cdn/`, so nothing appears in the bucket. To write to R2 while developing:
+
+1. Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` and `R2_BUCKET`.
+2. `R2_ENDPOINT` is optional. It defaults to `https://<account>.r2.cloudflarestorage.com`. If you set it, use the account URL only: anything after the host, such as the `/bucket` the dashboard shows, is dropped with a warning.
+3. Set `CDN_BASE_URL` to the bucket's public URL (an `r2.dev` URL or your custom domain).
+4. Start with both profiles: `mvn spring-boot:run -Dspring-boot.run.profiles=dev,r2`.
+
+Notes:
+- **Windows:** variables set in System settings only reach programs started afterwards. Open a new terminal (or restart your IDE) before starting the backend.
+- **Startup check:** the backend probes the bucket and stops with a clear message if the keys can't read it or the bucket doesn't exist.
+- **Dev data:** with `dev,r2`, files already in `backend/.local-cdn/` are copied into the bucket once (only missing files), so images and catalog versions the dev database already references keep working.
+- **Where files go:** the portal's publish bar shows "Cloudflare R2" or "تخزين محلي (تطوير)".
+
+### R2 in production
+
+- **Use a custom domain** on the bucket (for example `cdn.yourdomain`) and set `CDN_BASE_URL` to it. Cloudflare rate-limits the `r2.dev` URL and doesn't recommend it for production.
+- **Scope the API token** to Object Read & Write on this bucket only.
+- **CORS is optional.** The mobile app doesn't need it, and the portal falls back to plain `<img>` elements without it. To let the portal fetch images directly, add a bucket CORS rule allowing `GET` and `HEAD` from your portal's origin.
+- **Cache headers:** everything is written with `Cache-Control: public, max-age=31536000, immutable`, so it can be cached at the edge and on devices for a year. New content always gets a new key.
+- **Clean-up:** catalog versions older than 7 days and images unreferenced for 30 days are deleted from the bucket automatically.
+
+### When edits reach the app
+
+Each edit marks the catalog as changed. The publisher writes a new catalog version on its next run (every ~90 s), or immediately when an admin presses **انشر الآن** in the portal's publish bar. The app picks up the new version on its next launch, when it returns to the foreground, or on pull-to-refresh on home. It downloads only when the version changed.
+
 ### Admin portal settings
 
 - `ADMIN_ALLOWED_ORIGINS`: comma-separated origins allowed to call `/admin/**` with credentials. Dev default: `http://localhost:5000`.
@@ -157,6 +184,7 @@ Admin (all need an ADMIN token, except login / refresh / logout):
 | GET / PUT | `/admin/me` · `/admin/me/password` | |
 | GET / POST / PUT / DELETE | `/admin/users[/{id}]`, PUT `/admin/users/{id}/password` | |
 | POST | `/admin/images?kind=CATEGORY\|PRODUCT` | multipart `file` → `{hash, bg, previewUrl}` |
+| GET / POST | `/admin/catalog/status` · `/admin/catalog/publish` | `{version, publishedAt, pendingChanges, storage, publishIntervalSeconds, catalogUrl}`; publish sends pending edits now |
 | GET / POST / PUT / DELETE | `/admin/categories[/{id}]`, PUT `/{id}/active`, PUT `/order` | delete only when empty |
 | … | `/admin/categories/{id}/subcategories[/{subId}]` (+ `/active`, `/order`) | delete only with no products, deleted ones included |
 | GET / POST / PUT / DELETE | `/admin/products[/{id}]` | list filters: `q, categoryId, subcategoryId, active, available, page, size`; delete is soft |

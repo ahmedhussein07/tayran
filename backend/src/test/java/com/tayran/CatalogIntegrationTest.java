@@ -94,8 +94,14 @@ class CatalogIntegrationTest extends IntegrationTestBase {
         assertThat(delete("/admin/categories/" + categoryId + "/subcategories/" + subId, admin).code())
                 .isEqualTo("SUBCATEGORY_NOT_EMPTY");
 
-        // Until the publisher runs, the customer still sees the previous version.
+        // Until the publisher runs, the customer still sees the previous version, and the portal
+        // says changes are waiting.
         assertThat(catalogVersion(customer)).isEqualTo(versionBefore);
+        JsonNode pending = get("/admin/catalog/status", admin, null).content();
+        assertThat(pending.get("pendingChanges").asBoolean()).isTrue();
+        assertThat(pending.get("version").asInt()).isEqualTo(versionBefore);
+        assertThat(pending.get("storage").asString()).isEqualTo("LOCAL");
+        assertThat(get("/admin/catalog/status", customer, null).status()).isEqualTo(403);
 
         // 4. Publish → new version, bootstrap and catalog reflect it.
         assertThat(publisher.publishDirty()).isEqualTo(1);
@@ -131,6 +137,16 @@ class CatalogIntegrationTest extends IntegrationTestBase {
         // Nothing changed → nothing published, version unchanged.
         assertThat(publisher.publishDirty()).isZero();
         assertThat(catalogVersion(customer)).isEqualTo(version);
+
+        // "Publish now" from the portal: an edit goes live without waiting for the schedule.
+        put("/admin/products/" + liveId, product(subId, "عيش فينو", "Fino bread", productHash, true, "24", "30"), admin);
+        JsonNode published = post("/admin/catalog/publish", java.util.Map.of(), admin).content();
+        assertThat(published.get("version").asInt()).isEqualTo(version + 1);
+        assertThat(published.get("pendingChanges").asBoolean()).isFalse();
+        assertThat(published.get("publishedAt").isNull()).isFalse();
+        assertThat(byId(readCdnJson(published.get("catalogUrl").asString()).get("products"), liveId).get("price").asInt())
+                .isEqualTo(24);
+        version = version + 1;
 
         // 5. Deactivating the category takes it and its products out of bootstrap and the catalog.
         assertThat(put("/admin/categories/" + categoryId + "/active", Map.of("active", false), admin).status()).isEqualTo(200);
