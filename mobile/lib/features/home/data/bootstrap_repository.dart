@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:tayran_ui/tayran_ui.dart';
+
+import '../../../core/catalog/catalog.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/session/session.dart';
 import '../../../core/session/session_controller.dart';
@@ -9,7 +12,9 @@ final bootstrapProvider = FutureProvider.autoDispose<Bootstrap>((ref) async {
   final c = await ref.read(apiClientProvider).get('/app/bootstrap') as Map;
   final bootstrap = Bootstrap.fromJson(c);
   // Keep the stored step in sync (e.g. the address was removed elsewhere).
-  await ref.read(sessionControllerProvider.notifier).setNextStep(bootstrap.nextStep);
+  await ref
+      .read(sessionControllerProvider.notifier)
+      .setNextStep(bootstrap.nextStep);
   return bootstrap;
 });
 
@@ -29,18 +34,32 @@ class HomeAddress {
   final String landmark;
 
   /// "شارع المدرسة، كفر الياسمين": street then village, joined by the Arabic comma.
-  String label(bool arabic) =>
-      arabic ? '$streetNameAr، $villageNameAr' : '$streetNameEn, $villageNameEn';
+  String label(bool arabic) => arabic
+      ? '$streetNameAr، $villageNameAr'
+      : '$streetNameEn, $villageNameEn';
 }
 
+/// A home tile: the category's image (by hash) on its pastel.
 class HomeCategory {
-  const HomeCategory({required this.id, required this.nameAr, required this.nameEn, required this.iconKey, required this.colorToken});
+  const HomeCategory({
+    required this.id,
+    required this.nameAr,
+    required this.nameEn,
+    required this.img,
+    required this.bg,
+    required this.tile,
+  });
 
   final int id;
   final String nameAr;
   final String nameEn;
-  final String iconKey;
-  final String colorToken;
+
+  /// Image hash for [ImageTemplates.category]; null shows the fallback.
+  final String? img;
+  final String? bg;
+
+  /// Pastel token ("pastel-mint", or "neutral").
+  final String tile;
 
   String name(bool arabic) => arabic ? nameAr : nameEn;
 }
@@ -53,6 +72,9 @@ class Bootstrap {
     required this.etaText,
     required this.etaMinutes,
     required this.categories,
+    required this.catalog,
+    required this.catalogStoreId,
+    required this.images,
   });
 
   final NextStep nextStep;
@@ -61,6 +83,11 @@ class Bootstrap {
   final String etaText;
   final int etaMinutes;
   final List<HomeCategory> categories;
+
+  /// Where the current catalog is; null until the store's catalog has been published once.
+  final CatalogRef? catalog;
+  final int catalogStoreId;
+  final ImageTemplates images;
 
   factory Bootstrap.fromJson(Map c) {
     final a = c['address'] as Map?;
@@ -84,10 +111,14 @@ class Bootstrap {
             id: (k['id'] as num).toInt(),
             nameAr: k['nameAr'] as String,
             nameEn: k['nameEn'] as String,
-            iconKey: k['iconKey'] as String,
-            colorToken: k['colorToken'] as String,
+            img: k['img'] as String?,
+            bg: k['bg'] as String?,
+            tile: (k['tile'] as String?) ?? 'neutral',
           ),
       ],
+      catalog: CatalogRef.fromJson(c['catalog'] as Map?),
+      catalogStoreId: ((c['catalog'] as Map?)?['store'] as num?)?.toInt() ?? 1,
+      images: ImageTemplates.fromJson(c['images'] as Map),
     );
   }
 }

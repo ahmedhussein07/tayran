@@ -2,15 +2,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
-import '../../../core/theme/tokens.dart';
-import '../../../core/widgets/brand_mark.dart';
 import '../../../core/widgets/flow_scaffold.dart';
 import '../../../core/widgets/phone_field.dart';
-import '../../../core/widgets/tayran_button.dart';
-import '../../../core/widgets/tayran_icon.dart';
 import '../application/otp_flow.dart';
 import '../data/auth_repository.dart';
 
@@ -31,7 +28,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
   bool get _valid => EgyptPhone.isValid(_digits);
 
   /// Show the error once the number is complete and wrong, or after leaving it half-typed.
-  bool get _showInvalid => !_valid && _digits.isNotEmpty && (_touched || _digits.length == 10);
+  bool get _showInvalid =>
+      !_valid && _digits.isNotEmpty && (_touched || _digits.length == 10);
 
   Future<void> _send() async {
     if (!_valid || _sending) return;
@@ -40,8 +38,12 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
       _serverError = null;
     });
     try {
-      final challenge = await ref.read(authRepositoryProvider).requestOtp(EgyptPhone.e164(_digits));
-      ref.read(otpFlowProvider.notifier).start(
+      final challenge = await ref
+          .read(authRepositoryProvider)
+          .requestOtp(EgyptPhone.e164(_digits));
+      ref
+          .read(otpFlowProvider.notifier)
+          .start(
             phoneDigits: _digits,
             challengeId: challenge.challengeId,
             resendAfterSeconds: challenge.resendAfterSeconds,
@@ -50,9 +52,13 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     } on ApiException catch (e) {
       if (!mounted) return;
       final flow = ref.read(otpFlowProvider);
-      if (e.code == 'OTP_RESEND_TOO_SOON' && flow != null && flow.phoneDigits == _digits) {
+      if (e.code == 'OTP_RESEND_TOO_SOON' &&
+          flow != null &&
+          flow.phoneDigits == _digits) {
         // A code for this number is still on its way: go back to entering it.
-        ref.read(otpFlowProvider.notifier).wait((e.details['retryAfterSeconds'] as num?)?.toInt() ?? 30);
+        ref
+            .read(otpFlowProvider.notifier)
+            .wait((e.details['retryAfterSeconds'] as num?)?.toInt() ?? 30);
         context.push('/otp');
       } else {
         setState(() => _serverError = context.s.error(e.code));

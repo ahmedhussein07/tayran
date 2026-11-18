@@ -1,11 +1,16 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/strings.dart';
-import '../../../../core/theme/tokens.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// A banner image with a light and a dark version, and its text for screen readers.
 class PromoBanner {
-  const PromoBanner({required this.lightAsset, required this.darkAsset, required this.semanticLabel});
+  const PromoBanner({
+    required this.lightAsset,
+    required this.darkAsset,
+    required this.semanticLabel,
+  });
 
   final String lightAsset;
   final String darkAsset;
@@ -64,7 +69,10 @@ class _PromoCarouselState extends State<PromoCarousel> {
   }
 
   void _onScroll() {
-    final i = (_controller.offset / _itemExtent).round().clamp(0, widget.banners.length - 1);
+    final i = (_controller.offset / _itemExtent).round().clamp(
+      0,
+      widget.banners.length - 1,
+    );
     if (i != _index) setState(() => _index = i);
   }
 
@@ -96,7 +104,9 @@ class _PromoCarouselState extends State<PromoCarousel> {
                 child: ListView.separated(
                   controller: _controller,
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: TayranSpace.s4,
+                  ),
                   physics: _SnapToItemPhysics(itemExtent: _itemExtent),
                   itemCount: banners.length,
                   separatorBuilder: (_, _) => const SizedBox(width: _gap),
@@ -157,18 +167,28 @@ class _SnapToItemPhysics extends ScrollPhysics {
   _SnapToItemPhysics applyTo(ScrollPhysics? ancestor) =>
       _SnapToItemPhysics(itemExtent: itemExtent, parent: buildParent(ancestor));
 
-  double _targetFor(ScrollMetrics position, Tolerance tolerance, double velocity) {
+  double _targetFor(
+    ScrollMetrics position,
+    Tolerance tolerance,
+    double velocity,
+  ) {
     var item = position.pixels / itemExtent;
     if (velocity < -tolerance.velocity) {
       item -= 0.5;
     } else if (velocity > tolerance.velocity) {
       item += 0.5;
     }
-    return (item.roundToDouble() * itemExtent).clamp(position.minScrollExtent, position.maxScrollExtent);
+    return (item.roundToDouble() * itemExtent).clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
   }
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+    ScrollMetrics position,
+    double velocity,
+  ) {
     if ((velocity <= 0 && position.pixels <= position.minScrollExtent) ||
         (velocity >= 0 && position.pixels >= position.maxScrollExtent)) {
       return super.createBallisticSimulation(position, velocity);
@@ -176,7 +196,13 @@ class _SnapToItemPhysics extends ScrollPhysics {
     final tolerance = toleranceFor(position);
     final target = _targetFor(position, tolerance, velocity);
     if ((target - position.pixels).abs() < tolerance.distance) return null;
-    return ScrollSpringSimulation(spring, position.pixels, target, velocity, tolerance: tolerance);
+    return ScrollSpringSimulation(
+      spring,
+      position.pixels,
+      target,
+      velocity,
+      tolerance: tolerance,
+    );
   }
 
   @override

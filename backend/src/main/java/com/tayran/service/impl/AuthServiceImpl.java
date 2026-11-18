@@ -8,6 +8,7 @@ import com.tayran.model.AuthResponse;
 import com.tayran.model.OtpChallengeResponse;
 import com.tayran.model.TayranConst;
 import com.tayran.model.TokenPair;
+import com.tayran.model.UserRole;
 import com.tayran.service.AuthService;
 import com.tayran.service.NextStepResolver;
 import com.tayran.service.OtpService;
@@ -37,14 +38,16 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(noRollbackFor = BusinessException.class)
     public AuthResponse verifyOtp(UUID challengeId, String code) {
         String phone = otpService.verifyOtp(challengeId, code);
-        User user = userRepository.findByPhone(phone).orElseGet(() -> userRepository.save(new User(phone)));
-        return toAuthResponse(user, tokenService.issue(user.getId()));
+        // OTP sign-in is for customers only; an admin with the same phone gets a separate customer account.
+        User user = userRepository.findByPhoneAndRole(phone, UserRole.CUSTOMER)
+                .orElseGet(() -> userRepository.save(new User(phone, UserRole.CUSTOMER)));
+        return toAuthResponse(user, tokenService.issue(user));
     }
 
     @Override
     @Transactional(noRollbackFor = BusinessException.class)
     public AuthResponse refresh(String refreshToken) {
-        TokenPair pair = tokenService.rotate(refreshToken);
+        TokenPair pair = tokenService.rotate(refreshToken, UserRole.CUSTOMER);
         User user = userRepository.findById(pair.userId())
                 .orElseThrow(() -> new BusinessException(TayranConst.UNAUTHORIZED));
         return toAuthResponse(user, pair);

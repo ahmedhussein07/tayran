@@ -1,0 +1,14 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_final_locals: true
+    avoid_print: true
+    # Single-line guard clauses (`if (x) return;`) read fine; dart format puts them on two lines.
+    curly_braces_in_flow_control_structures: false

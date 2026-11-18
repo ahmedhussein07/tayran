@@ -1,12 +1,17 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/strings.dart';
-import '../../../../core/theme/tokens.dart';
-import '../../../../core/widgets/tayran_icon.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// Where the order goes, with the delivery promise (the orange ETA badge) beside it.
 class AddressHeader extends StatelessWidget {
-  const AddressHeader({super.key, required this.address, required this.etaText, this.onAddressTap});
+  const AddressHeader({
+    super.key,
+    required this.address,
+    required this.etaText,
+    this.onAddressTap,
+  });
 
   final String address;
   final String? etaText;
@@ -27,8 +32,19 @@ class AddressHeader extends StatelessWidget {
                 Container(
                   width: 38,
                   height: 38,
-                  decoration: BoxDecoration(color: c.surface, shape: BoxShape.circle, border: Border.all(color: c.line)),
-                  child: Center(child: TayranIcon('pin', size: 20, strokeWidth: 2.25, color: c.ink)),
+                  decoration: BoxDecoration(
+                    color: c.surface,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: c.line),
+                  ),
+                  child: Center(
+                    child: TayranIcon(
+                      'pin',
+                      size: 20,
+                      strokeWidth: 2.25,
+                      color: c.ink,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: TayranSpace.s2),
                 Expanded(
@@ -36,7 +52,13 @@ class AddressHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(s.deliverTo, style: TayranTypography.caption.copyWith(color: c.ink, height: 16 / 12)),
+                      Text(
+                        s.deliverTo,
+                        style: TayranTypography.caption.copyWith(
+                          color: c.ink,
+                          height: 16 / 12,
+                        ),
+                      ),
                       Row(
                         children: [
                           Flexible(
@@ -44,11 +66,18 @@ class AddressHeader extends StatelessWidget {
                               address,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TayranTypography.label.copyWith(color: c.ink),
+                              style: TayranTypography.label.copyWith(
+                                color: c.ink,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 2),
-                          TayranIcon('chevron-down', size: 18, strokeWidth: 2.5, color: c.ink),
+                          TayranIcon(
+                            'chevron-down',
+                            size: 18,
+                            strokeWidth: 2.5,
+                            color: c.ink,
+                          ),
                         ],
                       ),
                     ],
@@ -78,13 +107,23 @@ class _EtaBadge extends StatelessWidget {
     return Container(
       height: 28,
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(color: c.brand, borderRadius: BorderRadius.circular(TayranRadius.full)),
+      decoration: BoxDecoration(
+        color: c.brand,
+        borderRadius: BorderRadius.circular(TayranRadius.full),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           TayranIcon('bolt', size: 14, strokeWidth: 2.5, color: c.onBrand),
           const SizedBox(width: TayranSpace.s1),
-          Text(text, maxLines: 1, style: TayranTypography.caption.copyWith(color: c.onBrand, fontWeight: FontWeight.w600)),
+          Text(
+            text,
+            maxLines: 1,
+            style: TayranTypography.caption.copyWith(
+              color: c.onBrand,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

@@ -1,11 +1,14 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/catalog/catalog_providers.dart';
 import '../../../core/l10n/strings.dart';
-import '../../../core/theme/tokens.dart';
-import '../../../core/widgets/tayran_button.dart';
-import '../../../core/widgets/tayran_icon.dart';
+import '../../../core/router/app_router.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../data/bootstrap_repository.dart';
 import 'widgets/address_header.dart';
 import 'widgets/category_tile.dart';
@@ -30,17 +33,26 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: c.surface,
         bottomNavigationBar: TayranTabBar(
           active: HomeTab.home,
-          onChanged: (_) {}, // Only Home exists in Phase 1; the other tabs are placeholders.
+          onChanged: (
+            _,
+          ) {}, // Only Home exists in Phase 1; the other tabs are placeholders.
         ),
         body: Column(
           children: [
             // The status bar sits on the white header, as in the design.
-            Container(height: MediaQuery.paddingOf(context).top, color: c.headerBg),
+            Container(
+              height: MediaQuery.paddingOf(context).top,
+              color: c.headerBg,
+            ),
             Expanded(
               child: switch (bootstrap) {
                 AsyncData(:final value) => _HomeContent(data: value),
-                AsyncError() when !bootstrap.isLoading => _HomeError(onRetry: () => ref.invalidate(bootstrapProvider)),
-                _ => const Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
+                AsyncError() when !bootstrap.isLoading => _HomeError(
+                  onRetry: () => ref.invalidate(bootstrapProvider),
+                ),
+                _ => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                ),
               },
             ),
           ],
@@ -59,6 +71,8 @@ class _HomeContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final s = context.s;
+    // Start loading the catalog with home, so a category opens instantly.
+    ref.watch(catalogProvider);
     final width = MediaQuery.sizeOf(context).width;
     // Four across inside the 16px gutter, 12px between columns; the name sits under the tile.
     final tile = (width - 2 * TayranSpace.s4 - 3 * TayranSpace.s3) / 4;
@@ -66,14 +80,22 @@ class _HomeContent extends ConsumerWidget {
     return RefreshIndicator(
       color: c.ink,
       backgroundColor: c.surfaceRaised,
-      onRefresh: () => ref.refresh(bootstrapProvider.future),
+      onRefresh: () async {
+        ref.invalidate(bootstrapProvider);
+        await ref.read(catalogProvider.future);
+      },
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(
             child: Container(
               color: c.headerBg,
-              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s2, TayranSpace.s4, TayranSpace.s3),
+              padding: const EdgeInsets.fromLTRB(
+                TayranSpace.s4,
+                TayranSpace.s2,
+                TayranSpace.s4,
+                TayranSpace.s3,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -87,24 +109,47 @@ class _HomeContent extends ConsumerWidget {
               ),
             ),
           ),
-          SliverPersistentHeader(pinned: true, delegate: _SearchBand(colors: c, shadows: context.shadows)),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SearchBand(colors: c, shadows: context.shadows),
+          ),
           SliverPadding(
             padding: const EdgeInsets.only(top: TayranSpace.s4),
-            sliver: SliverToBoxAdapter(child: PromoCarousel(banners: PromoCarousel.defaults(s))),
+            sliver: SliverToBoxAdapter(
+              child: PromoCarousel(banners: PromoCarousel.defaults(s)),
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s6, TayranSpace.s4, 0),
+              padding: const EdgeInsets.fromLTRB(
+                TayranSpace.s4,
+                TayranSpace.s6,
+                TayranSpace.s4,
+                0,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Expanded(child: Text(s.categories, style: TayranTypography.title.copyWith(color: c.ink))),
+                  Expanded(
+                    child: Text(
+                      s.categories,
+                      style: TayranTypography.title.copyWith(color: c.ink),
+                    ),
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(s.seeAll, style: TayranTypography.label.copyWith(color: c.link)),
+                      Text(
+                        s.seeAll,
+                        style: TayranTypography.label.copyWith(color: c.link),
+                      ),
                       const SizedBox(width: 2),
-                      TayranIcon('chevron-forward', size: 18, strokeWidth: 2.5, color: c.link),
+                      TayranIcon(
+                        'chevron-forward',
+                        size: 18,
+                        strokeWidth: 2.5,
+                        color: c.link,
+                      ),
                     ],
                   ),
                 ],
@@ -112,26 +157,32 @@ class _HomeContent extends ConsumerWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s3, TayranSpace.s4, TayranSpace.s8),
+            padding: const EdgeInsets.fromLTRB(
+              TayranSpace.s4,
+              TayranSpace.s3,
+              TayranSpace.s4,
+              TayranSpace.s8,
+            ),
             sliver: SliverGrid(
               // The design's grid: repeat(4, 1fr), 14px row gap, 12px column gap.
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: TayranSpace.s3,
-                mainAxisExtent: tile + 6 + 16, // square tile, 6px gap, one 16px label line
+                mainAxisExtent:
+                    tile + 6 + 16, // square tile, 6px gap, one 16px label line
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, i) {
-                  final category = data.categories[i];
-                  return CategoryTile(
-                    label: category.name(s.isArabic),
-                    iconKey: category.iconKey,
-                    colorToken: category.colorToken,
-                  );
-                },
-                childCount: data.categories.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, i) {
+                final category = data.categories[i];
+                return CategoryTile(
+                  label: category.name(s.isArabic),
+                  imageHash: category.img,
+                  imageBg: category.bg,
+                  tile: category.tile,
+                  templates: data.images,
+                  onTap: () => context.push(Routes.category(category.id)),
+                );
+              }, childCount: data.categories.length),
             ),
           ),
         ],
@@ -185,20 +236,35 @@ class _SearchBand extends SliverPersistentHeaderDelegate {
   double get maxExtent => _height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(TayranSpace.s4, 0, TayranSpace.s4, TayranSpace.s4),
+      padding: const EdgeInsets.fromLTRB(
+        TayranSpace.s4,
+        0,
+        TayranSpace.s4,
+        TayranSpace.s4,
+      ),
       decoration: BoxDecoration(
         color: colors.headerBg,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(TayranRadius.xl)),
-        boxShadow: [BoxShadow(color: colors.line, offset: const Offset(0, 1)), ...shadows.card],
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(TayranRadius.xl),
+        ),
+        boxShadow: [
+          BoxShadow(color: colors.line, offset: const Offset(0, 1)),
+          ...shadows.card,
+        ],
       ),
       child: const SearchField(),
     );
   }
 
   @override
-  bool shouldRebuild(_SearchBand old) => old.colors != colors || old.shadows != shadows;
+  bool shouldRebuild(_SearchBand old) =>
+      old.colors != colors || old.shadows != shadows;
 }
 
 class _HomeError extends StatelessWidget {
@@ -216,9 +282,17 @@ class _HomeError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(s.homeFailed, textAlign: TextAlign.center, style: TayranTypography.title.copyWith(color: c.ink)),
+            Text(
+              s.homeFailed,
+              textAlign: TextAlign.center,
+              style: TayranTypography.title.copyWith(color: c.ink),
+            ),
             const SizedBox(height: TayranSpace.s4),
-            TayranButton(label: s.retry, variant: TayranButtonVariant.ghost, onPressed: onRetry),
+            TayranButton(
+              label: s.retry,
+              variant: TayranButtonVariant.ghost,
+              onPressed: onRetry,
+            ),
           ],
         ),
       ),

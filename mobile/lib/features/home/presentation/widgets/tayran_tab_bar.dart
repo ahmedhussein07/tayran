@@ -1,14 +1,18 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/l10n/strings.dart';
-import '../../../../core/theme/tokens.dart';
-import '../../../../core/widgets/tayran_icon.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
 
 enum HomeTab { home, categories, search, orders, account }
 
 /// The five-destination bottom bar. The active tab is navy on a tint pill.
 class TayranTabBar extends StatelessWidget {
-  const TayranTabBar({super.key, required this.active, required this.onChanged});
+  const TayranTabBar({
+    super.key,
+    required this.active,
+    required this.onChanged,
+  });
 
   final HomeTab active;
   final ValueChanged<HomeTab> onChanged;
@@ -25,7 +29,10 @@ class TayranTabBar extends StatelessWidget {
       (HomeTab.account, 'user', s.tabAccount),
     ];
     return Container(
-      decoration: BoxDecoration(color: c.surfaceRaised, border: Border(top: BorderSide(color: c.line))),
+      decoration: BoxDecoration(
+        color: c.surfaceRaised,
+        border: Border(top: BorderSide(color: c.line)),
+      ),
       padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
       child: SizedBox(
         height: TayranSize.tabbarH,
@@ -34,7 +41,14 @@ class TayranTabBar extends StatelessWidget {
           child: Row(
             children: [
               for (final (tab, icon, label) in items)
-                Expanded(child: _Tab(icon: icon, label: label, active: tab == active, onTap: () => onChanged(tab))),
+                Expanded(
+                  child: _Tab(
+                    icon: icon,
+                    label: label,
+                    active: tab == active,
+                    onTap: () => onChanged(tab),
+                  ),
+                ),
             ],
           ),
         ),
@@ -44,7 +58,12 @@ class TayranTabBar extends StatelessWidget {
 }
 
 class _Tab extends StatelessWidget {
-  const _Tab({required this.icon, required this.label, required this.active, required this.onTap});
+  const _Tab({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
 
   final String icon;
   final String label;
@@ -79,7 +98,10 @@ class _Tab extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               label,
-              style: TayranTypography.micro.copyWith(color: color, fontWeight: active ? FontWeight.w700 : FontWeight.w600),
+              style: TayranTypography.micro.copyWith(
+                color: color,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+              ),
             ),
           ],
         ),

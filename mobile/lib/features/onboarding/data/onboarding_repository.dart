@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/session/session.dart';
 
-final onboardingRepositoryProvider =
-    Provider<OnboardingRepository>((ref) => OnboardingRepository(ref.read(apiClientProvider)));
+final onboardingRepositoryProvider = Provider<OnboardingRepository>(
+  (ref) => OnboardingRepository(ref.read(apiClientProvider)),
+);
 
 /// Loaded once per app session and kept: GET /locations is called a single time.
 final locationsProvider = FutureProvider<List<Village>>((ref) {
@@ -22,7 +23,12 @@ class Street {
 }
 
 class Village {
-  const Village({required this.id, required this.nameAr, required this.nameEn, required this.streets});
+  const Village({
+    required this.id,
+    required this.nameAr,
+    required this.nameEn,
+    required this.streets,
+  });
 
   final int id;
   final String nameAr;
@@ -39,7 +45,10 @@ class OnboardingRepository {
 
   /// PUT /me/name
   Future<NextStep> updateName(String firstName, String lastName) async {
-    final c = await _api.put('/me/name', {'firstName': firstName, 'lastName': lastName}) as Map;
+    final c = await _api.put('/me/name', {
+      'firstName': firstName,
+      'lastName': lastName,
+    }) as Map;
     return NextStep.parse(c['nextStep'] as String);
   }
 
@@ -54,15 +63,27 @@ class OnboardingRepository {
           nameEn: v['nameEn'] as String,
           streets: [
             for (final s in v['streets'] as List)
-              Street(id: (s['id'] as num).toInt(), nameAr: s['nameAr'] as String, nameEn: s['nameEn'] as String),
+              Street(
+                id: (s['id'] as num).toInt(),
+                nameAr: s['nameAr'] as String,
+                nameEn: s['nameEn'] as String,
+              ),
           ],
         ),
     ];
   }
 
   /// POST /me/address
-  Future<NextStep> saveAddress({required int villageId, required int streetId, required String landmark}) async {
-    final c = await _api.post('/me/address', {'villageId': villageId, 'streetId': streetId, 'landmark': landmark}) as Map;
+  Future<NextStep> saveAddress({
+    required int villageId,
+    required int streetId,
+    required String landmark,
+  }) async {
+    final c = await _api.post('/me/address', {
+      'villageId': villageId,
+      'streetId': streetId,
+      'landmark': landmark,
+    }) as Map;
     return NextStep.parse(c['nextStep'] as String);
   }
 }

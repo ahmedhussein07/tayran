@@ -3,15 +3,20 @@ import 'dart:math' as math;
 
 import 'package:material_ui/material_ui.dart';
 
-import '../format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../l10n/strings.dart';
-import '../theme/tokens.dart';
-import 'tayran_button.dart';
 
 /// "ابعت الكود تاني خلال ٠:٣٠", then "موصلكش الكود؟ ابعت تاني".
 /// Counts down from [seconds]; changing [restartKey] restarts it.
 class ResendTimer extends StatefulWidget {
-  const ResendTimer({super.key, required this.seconds, required this.restartKey, required this.onResend, this.busy = false});
+  const ResendTimer({
+    super.key,
+    required this.seconds,
+    required this.restartKey,
+    required this.onResend,
+    this.busy = false,
+  });
 
   final int seconds;
   final Object restartKey;
@@ -36,7 +41,9 @@ class _ResendTimerState extends State<ResendTimer> {
   @override
   void didUpdateWidget(ResendTimer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.restartKey != widget.restartKey || oldWidget.seconds != widget.seconds) _start();
+    if (oldWidget.restartKey != widget.restartKey ||
+        oldWidget.seconds != widget.seconds)
+      _start();
   }
 
   void _start() {
@@ -70,12 +77,21 @@ class _ResendTimerState extends State<ResendTimer> {
       return Semantics(
         liveRegion: false,
         child: Text.rich(
-          TextSpan(style: muted, children: [
-            TextSpan(text: parts.first),
-            // An LTR isolate so ٠:٣٠ never reorders.
-            TextSpan(text: '\u2066$time\u2069', style: muted.copyWith(color: c.ink, fontWeight: FontWeight.w700)),
-            if (parts.length > 1) TextSpan(text: parts.last),
-          ]),
+          TextSpan(
+            style: muted,
+            children: [
+              TextSpan(text: parts.first),
+              // An LTR isolate so ٠:٣٠ never reorders.
+              TextSpan(
+                text: '\u2066$time\u2069',
+                style: muted.copyWith(
+                  color: c.ink,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (parts.length > 1) TextSpan(text: parts.last),
+            ],
+          ),
           textAlign: TextAlign.center,
         ),
       );

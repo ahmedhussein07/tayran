@@ -1,11 +1,17 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../theme/tokens.dart';
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// The sign-in / sign-up screen frame from the design: the page with an optional warm glow,
 /// scrolling content, and a raised dock at the bottom holding the main action.
 class FlowScaffold extends StatelessWidget {
-  const FlowScaffold({super.key, required this.body, required this.dock, this.header, this.glow = false});
+  const FlowScaffold({
+    super.key,
+    required this.body,
+    required this.dock,
+    this.header,
+    this.glow = false,
+  });
 
   final Widget? header;
   final Widget body;
@@ -44,7 +50,12 @@ class FlowScaffold extends StatelessWidget {
                 ?header,
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s2, TayranSpace.s4, TayranSpace.s6),
+                    padding: const EdgeInsets.fromLTRB(
+                      TayranSpace.s4,
+                      TayranSpace.s2,
+                      TayranSpace.s4,
+                      TayranSpace.s6,
+                    ),
                     child: body,
                   ),
                 ),
@@ -74,7 +85,13 @@ class FlowScaffold extends StatelessWidget {
 
 /// A screen heading: title (optionally with an icon) and a muted subtitle.
 class FlowHeading extends StatelessWidget {
-  const FlowHeading({super.key, required this.title, required this.subtitle, this.icon, this.center = false});
+  const FlowHeading({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.icon,
+    this.center = false,
+  });
 
   final String title;
   final Widget? subtitle;
@@ -87,13 +104,23 @@ class FlowHeading extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: TayranSpace.s2),
       child: Column(
-        crossAxisAlignment: center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: center
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisSize: center ? MainAxisSize.min : MainAxisSize.max,
             children: [
-              Flexible(child: Text(title, style: TayranTypography.titleLg.copyWith(color: c.ink))),
-              if (icon != null) ...[const SizedBox(width: TayranSpace.s2), icon!],
+              Flexible(
+                child: Text(
+                  title,
+                  style: TayranTypography.titleLg.copyWith(color: c.ink),
+                ),
+              ),
+              if (icon != null) ...[
+                const SizedBox(width: TayranSpace.s2),
+                icon!,
+              ],
             ],
           ),
           const SizedBox(height: TayranSpace.s1),

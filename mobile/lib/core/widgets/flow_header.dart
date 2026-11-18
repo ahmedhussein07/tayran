@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/strings.dart';
-import '../theme/tokens.dart';
-import 'tayran_button.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// Back arrow plus an optional "step n of m" progress bar.
 class FlowHeader extends StatelessWidget {
@@ -23,7 +23,11 @@ class FlowHeader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4 - 4),
         child: Row(
           children: [
-            TayranIconButton(icon: 'chevron-back', onPressed: onBack, semanticLabel: s.back),
+            TayranIconButton(
+              icon: 'chevron-back',
+              onPressed: onBack,
+              semanticLabel: s.back,
+            ),
             if (hasSteps) ...[
               const SizedBox(width: TayranSpace.s3 - 4),
               Expanded(
@@ -42,7 +46,9 @@ class FlowHeader extends StatelessWidget {
                                   height: 6,
                                   decoration: BoxDecoration(
                                     color: i < step! ? c.ink : c.line,
-                                    borderRadius: BorderRadius.circular(TayranRadius.full),
+                                    borderRadius: BorderRadius.circular(
+                                      TayranRadius.full,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -51,7 +57,12 @@ class FlowHeader extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: TayranSpace.s3),
-                      Text(s.stepOf(step!, total!), style: TayranTypography.caption.copyWith(color: c.inkMuted)),
+                      Text(
+                        s.stepOf(step!, total!),
+                        style: TayranTypography.caption.copyWith(
+                          color: c.inkMuted,
+                        ),
+                      ),
                     ],
                   ),
                 ),

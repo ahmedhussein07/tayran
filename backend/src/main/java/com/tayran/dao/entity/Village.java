@@ -27,4 +27,8 @@ public class Village {
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
+
+    /** The store that delivers to this village. */
+    @Column(name = "store_id", nullable = false)
+    private Long storeId;
 }

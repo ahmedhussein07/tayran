@@ -42,7 +42,11 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class,
-            MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class})
+            MissingRequestHeaderException.class, MethodArgumentTypeMismatchException.class,
+            // e.g. JSON sent to the multipart image upload, or the "file" part missing
+            org.springframework.web.HttpMediaTypeNotSupportedException.class,
+            org.springframework.web.multipart.support.MissingServletRequestPartException.class,
+            org.springframework.web.multipart.MultipartException.class})
     public ResponseEntity<ResponsePojo> handleBadRequest(Exception ex) {
         log.debug("Bad request: {}", ex.getMessage());
         return respond(TayranConst.VALIDATION_ERROR, Map.of("fields", List.of()));
@@ -56,6 +60,17 @@ public class ExceptionHandling {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ResponsePojo> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
         return respond(TayranConst.METHOD_NOT_ALLOWED, null);
+    }
+
+    /** A signed-in user calling an endpoint their role can't use (method-level checks). */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ResponsePojo> handleForbidden(Exception ex) {
+        return respond(TayranConst.FORBIDDEN, null);
+    }
+
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<ResponsePojo> handleUploadTooLarge(Exception ex) {
+        return respond(TayranConst.IMAGE_TOO_LARGE, null);
     }
 
     @ExceptionHandler(Exception.class)

@@ -2,6 +2,8 @@ package com.tayran.dao.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import lombok.Setter;
 public class Category {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name_ar", nullable = false)
@@ -22,15 +25,19 @@ public class Category {
     @Column(name = "name_en", nullable = false)
     private String nameEn;
 
-    @Column(name = "icon_key", nullable = false)
-    private String iconKey;
+    /** A pastel token from the design system, e.g. "pastel-mint". */
+    @Column(name = "tile_color", nullable = false)
+    private String tileColor;
 
-    @Column(name = "color_token", nullable = false)
-    private String colorToken;
+    @Column(name = "image_hash", length = 12)
+    private String imageHash;
+
+    @Column(name = "image_bg", length = 7)
+    private String imageBg;
 
     @Column(name = "sort_order", nullable = false)
     private int sortOrder;
 
     @Column(name = "active", nullable = false)
-    private boolean active;
+    private boolean active = true;
 }

@@ -6,12 +6,11 @@ import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/session/session_controller.dart';
-import '../../../core/theme/tokens.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../../../core/widgets/flow_header.dart';
 import '../../../core/widgets/flow_scaffold.dart';
-import '../../../core/widgets/tayran_button.dart';
-import '../../../core/widgets/tayran_icon.dart';
-import '../../../core/widgets/tayran_text_field.dart';
 import '../data/onboarding_repository.dart';
 
 /// Sign-up step 1 of 2: first and last name.
@@ -50,12 +49,14 @@ class _NameScreenState extends ConsumerState<NameScreen> {
     super.dispose();
   }
 
-  bool get _bothFilled => _first.text.trim().isNotEmpty && _last.text.trim().isNotEmpty;
+  bool get _bothFilled =>
+      _first.text.trim().isNotEmpty && _last.text.trim().isNotEmpty;
 
   String? _errorFor(TextEditingController controller, bool touched) {
     final value = controller.text.trim();
     if (value.isEmpty) return touched || _submitted ? context.s.required : null;
-    if (_submitted && value.characters.length < _min) return context.s.nameTooShort;
+    if (_submitted && value.characters.length < _min)
+      return context.s.nameTooShort;
     return null;
   }
 
@@ -63,10 +64,15 @@ class _NameScreenState extends ConsumerState<NameScreen> {
     setState(() => _submitted = true);
     final first = _first.text.trim();
     final last = _last.text.trim();
-    if (first.characters.length < _min || last.characters.length < _min || _saving) return;
+    if (first.characters.length < _min ||
+        last.characters.length < _min ||
+        _saving)
+      return;
     setState(() => _saving = true);
     try {
-      final next = await ref.read(onboardingRepositoryProvider).updateName(first, last);
+      final next = await ref
+          .read(onboardingRepositoryProvider)
+          .updateName(first, last);
       await ref.read(sessionControllerProvider.notifier).setNextStep(next);
       // The router lets an ADDRESS-step user stay on /name (to edit it after going back),
       // so moving forward is explicit.
@@ -128,7 +134,13 @@ class _NameScreenState extends ConsumerState<NameScreen> {
           ),
           if (_serverError != null) ...[
             const SizedBox(height: TayranSpace.s3),
-            Text(_serverError!, style: TayranTypography.caption.copyWith(color: c.danger, fontWeight: FontWeight.w600)),
+            Text(
+              _serverError!,
+              style: TayranTypography.caption.copyWith(
+                color: c.danger,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ],
       ),

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tayran/core/format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
 import 'package:tayran/core/widgets/picker_sheet.dart';
 
 void main() {
@@ -19,7 +19,12 @@ void main() {
 
   group('EgyptPhone.isValid', () {
     test('only 010, 011, 012, 015 mobiles', () {
-      for (final ok in ['1012345678', '1112345678', '1212345678', '1512345678']) {
+      for (final ok in [
+        '1012345678',
+        '1112345678',
+        '1212345678',
+        '1512345678',
+      ]) {
         expect(EgyptPhone.isValid(ok), isTrue, reason: ok);
       }
       for (final bad in ['1312345678', '101234567', '2012345678', '']) {

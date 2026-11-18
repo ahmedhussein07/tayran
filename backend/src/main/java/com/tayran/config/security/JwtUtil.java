@@ -1,6 +1,7 @@
 package com.tayran.config.security;
 
 import com.tayran.config.properties.JwtProperties;
+import com.tayran.model.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -13,11 +14,13 @@ import java.time.Instant;
 import java.util.Date;
 
 /**
- * Issues and parses access tokens (HS256). The user id is the subject, so checking a token
- * needs no database lookup.
+ * Issues and parses access tokens (HS256). The user id is the subject and the role a claim, so
+ * checking a token needs no database lookup.
  */
 @Component
 public class JwtUtil {
+
+    private static final String ROLE_CLAIM = "role";
 
     private final SecretKey key;
     private final JwtProperties properties;
@@ -33,10 +36,11 @@ public class JwtUtil {
         this.clock = clock;
     }
 
-    public String generateAccessToken(long userId) {
+    public String generateAccessToken(long userId, UserRole role) {
         Instant now = clock.instant();
         return Jwts.builder()
                 .subject(Long.toString(userId))
+                .claim(ROLE_CLAIM, role.name())
                 .issuer(properties.issuer())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(properties.accessTokenTtl())))
@@ -48,7 +52,7 @@ public class JwtUtil {
      * @throws io.jsonwebtoken.ExpiredJwtException when the token has expired
      * @throws io.jsonwebtoken.JwtException        when the token is invalid in any other way
      */
-    public long parseUserId(String token) {
+    public AuthUser parse(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(key)
                 .requireIssuer(properties.issuer())
@@ -56,7 +60,9 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return Long.parseLong(claims.getSubject());
+        String role = claims.get(ROLE_CLAIM, String.class);
+        // Phase 1 tokens carry no role claim: they were all customer tokens.
+        return new AuthUser(Long.parseLong(claims.getSubject()), role == null ? UserRole.CUSTOMER : UserRole.valueOf(role));
     }
 
     public long accessTokenTtlSeconds() {

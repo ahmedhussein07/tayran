@@ -39,9 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith(BEARER)) {
             try {
-                long userId = jwtUtil.parseUserId(header.substring(BEARER.length()).trim());
+                AuthUser user = jwtUtil.parse(header.substring(BEARER.length()).trim());
                 var authentication = new UsernamePasswordAuthenticationToken(
-                        new AuthUser(userId), null, List.of(new SimpleGrantedAuthority(TayranConst.ROLE_CUSTOMER)));
+                        user, null, List.of(new SimpleGrantedAuthority(user.role().name())));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (ExpiredJwtException e) {
                 request.setAttribute(AUTH_ERROR_ATTRIBUTE, TayranConst.TOKEN_EXPIRED);

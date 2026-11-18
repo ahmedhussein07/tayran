@@ -4,7 +4,8 @@ import '../session/session.dart';
 
 /// Tokens and the last known next step, in the platform's secure storage (Keychain / Keystore).
 class SessionStore {
-  SessionStore([FlutterSecureStorage? storage]) : _storage = storage ?? const FlutterSecureStorage();
+  SessionStore([FlutterSecureStorage? storage])
+    : _storage = storage ?? const FlutterSecureStorage();
 
   final FlutterSecureStorage _storage;
 
@@ -18,7 +19,11 @@ class SessionStore {
     final refresh = values[_refresh];
     final step = values[_nextStep];
     if (access == null || refresh == null || step == null) return null;
-    return Session(accessToken: access, refreshToken: refresh, nextStep: NextStep.parse(step));
+    return Session(
+      accessToken: access,
+      refreshToken: refresh,
+      nextStep: NextStep.parse(step),
+    );
   }
 
   Future<void> write(Session session) async {

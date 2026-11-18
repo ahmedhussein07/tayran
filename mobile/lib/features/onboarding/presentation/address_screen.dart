@@ -6,13 +6,13 @@ import 'package:go_router/go_router.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/session/session_controller.dart';
-import '../../../core/theme/tokens.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../../../core/widgets/flow_header.dart';
 import '../../../core/widgets/flow_scaffold.dart';
 import '../../../core/widgets/picker_sheet.dart';
 import '../../../core/widgets/select_field.dart';
-import '../../../core/widgets/tayran_button.dart';
-import '../../../core/widgets/tayran_text_field.dart';
 import '../data/onboarding_repository.dart';
 
 /// Sign-up step 2 of 2: village, street and a landmark. No map and no location permission.
@@ -49,7 +49,8 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
     super.dispose();
   }
 
-  bool get _complete => _village != null && _street != null && _landmark.text.trim().isNotEmpty;
+  bool get _complete =>
+      _village != null && _street != null && _landmark.text.trim().isNotEmpty;
 
   Future<void> _pickVillage(List<Village> villages) async {
     final s = context.s;
@@ -58,9 +59,17 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
       title: s.villageSheetTitle,
       searchPlaceholder: s.villageSearch,
       selectedId: _village?.id,
-      items: [for (final v in villages) PickerItem(id: v.id, label: v.name(s.isArabic))],
-      footerBuilder: (context, showMessage) => TayranTextLink(s.villageNotFound, onTap: showMessage, style: TayranTypography.body),
-      messageBuilder: (context, backToList) => _NotServedMessage(onBack: backToList),
+      items: [
+        for (final v in villages)
+          PickerItem(id: v.id, label: v.name(s.isArabic)),
+      ],
+      footerBuilder: (context, showMessage) => TayranTextLink(
+        s.villageNotFound,
+        onTap: showMessage,
+        style: TayranTypography.body,
+      ),
+      messageBuilder: (context, backToList) =>
+          _NotServedMessage(onBack: backToList),
     );
     if (!mounted) return;
     if (picked == null) {
@@ -84,29 +93,41 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
       title: s.streetSheetTitle(village.name(s.isArabic)),
       searchPlaceholder: s.streetSearch,
       selectedId: _street?.id,
-      items: [for (final st in village.streets) PickerItem(id: st.id, label: st.name(s.isArabic))],
+      items: [
+        for (final st in village.streets)
+          PickerItem(id: st.id, label: st.name(s.isArabic)),
+      ],
     );
     if (!mounted) return;
     setState(() {
-      if (picked != null) _street = village.streets.firstWhere((st) => st.id == picked.id);
+      if (picked != null)
+        _street = village.streets.firstWhere((st) => st.id == picked.id);
       _streetError = _street == null;
     });
   }
 
   String? _landmarkError() {
     final value = _landmark.text.trim();
-    if (value.isEmpty) return _landmarkTouched || _submitted ? context.s.required : null;
-    if (_submitted && value.characters.length < _landmarkMin) return context.s.landmarkTooShort;
+    if (value.isEmpty)
+      return _landmarkTouched || _submitted ? context.s.required : null;
+    if (_submitted && value.characters.length < _landmarkMin)
+      return context.s.landmarkTooShort;
     return null;
   }
 
   Future<void> _save() async {
     setState(() => _submitted = true);
     final landmark = _landmark.text.trim();
-    if (_village == null || _street == null || landmark.characters.length < _landmarkMin || _saving) return;
+    if (_village == null ||
+        _street == null ||
+        landmark.characters.length < _landmarkMin ||
+        _saving)
+      return;
     setState(() => _saving = true);
     try {
-      final next = await ref.read(onboardingRepositoryProvider).saveAddress(
+      final next = await ref
+          .read(onboardingRepositoryProvider)
+          .saveAddress(
             villageId: _village!.id,
             streetId: _street!.id,
             landmark: landmark,
@@ -146,8 +167,16 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
             const SizedBox(height: TayranSpace.s2),
             Row(
               children: [
-                Expanded(child: Text(s.locationsFailed, style: TayranTypography.caption.copyWith(color: c.danger))),
-                TayranTextLink(s.retry, onTap: () => ref.invalidate(locationsProvider)),
+                Expanded(
+                  child: Text(
+                    s.locationsFailed,
+                    style: TayranTypography.caption.copyWith(color: c.danger),
+                  ),
+                ),
+                TayranTextLink(
+                  s.retry,
+                  onTap: () => ref.invalidate(locationsProvider),
+                ),
               ],
             ),
           ],
@@ -176,7 +205,13 @@ class _AddressScreenState extends ConsumerState<AddressScreen> {
           ),
           if (_serverError != null) ...[
             const SizedBox(height: TayranSpace.s3),
-            Text(_serverError!, style: TayranTypography.caption.copyWith(color: c.danger, fontWeight: FontWeight.w600)),
+            Text(
+              _serverError!,
+              style: TayranTypography.caption.copyWith(
+                color: c.danger,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ],
       ),
@@ -202,20 +237,40 @@ class _NotServedMessage extends StatelessWidget {
     final s = context.s;
     final c = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4, vertical: TayranSpace.s6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TayranSpace.s4,
+        vertical: TayranSpace.s6,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 96,
             height: 96,
-            decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: context.shadows.card),
-            child: ClipOval(child: SvgPicture.asset('assets/images/courier_oops.svg', fit: BoxFit.cover)),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: context.shadows.card,
+            ),
+            child: ClipOval(
+              child: SvgPicture.asset(
+                'assets/images/courier_oops.svg',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           const SizedBox(height: TayranSpace.s4),
-          Text(s.notServedYet, textAlign: TextAlign.center, style: TayranTypography.title.copyWith(color: c.ink)),
+          Text(
+            s.notServedYet,
+            textAlign: TextAlign.center,
+            style: TayranTypography.title.copyWith(color: c.ink),
+          ),
           const SizedBox(height: TayranSpace.s4),
-          TayranButton(label: s.backToList, variant: TayranButtonVariant.ghost, size: TayranButtonSize.sm, onPressed: onBack),
+          TayranButton(
+            label: s.backToList,
+            variant: TayranButtonVariant.ghost,
+            size: TayranButtonSize.sm,
+            onPressed: onBack,
+          ),
         ],
       ),
     );

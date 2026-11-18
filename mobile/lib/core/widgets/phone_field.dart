@@ -2,16 +2,21 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../l10n/strings.dart';
-import '../theme/tokens.dart';
-import 'tayran_icon.dart';
-import 'tayran_text_field.dart';
 
 /// Egyptian mobile field: a fixed +20 with the flag, the number grouped 2-4-4 as it is typed,
 /// always left to right, Arabic-Indic digits in Arabic. Reports the 10 national digits.
 class PhoneField extends StatefulWidget {
-  const PhoneField({super.key, required this.onChanged, this.initialDigits = '', this.error, this.onBlur, this.onSubmitted});
+  const PhoneField({
+    super.key,
+    required this.onChanged,
+    this.initialDigits = '',
+    this.error,
+    this.onBlur,
+    this.onSubmitted,
+  });
 
   final ValueChanged<String> onChanged;
   final String initialDigits;
@@ -44,7 +49,8 @@ class _PhoneFieldState extends State<PhoneField> {
     });
   }
 
-  String _display(String digits) => Digits.localize(EgyptPhone.group(digits), arabic: _arabic);
+  String _display(String digits) =>
+      Digits.localize(EgyptPhone.group(digits), arabic: _arabic);
 
   @override
   void dispose() {
@@ -58,7 +64,12 @@ class _PhoneFieldState extends State<PhoneField> {
     final c = context.colors;
     final s = context.s;
     final valid = EgyptPhone.isValid(_digits);
-    final numberStyle = TayranTypography.label.copyWith(fontSize: 18, height: 26 / 18, letterSpacing: 18 * .04, color: c.ink);
+    final numberStyle = TayranTypography.label.copyWith(
+      fontSize: 18,
+      height: 26 / 18,
+      letterSpacing: 18 * .04,
+      color: c.ink,
+    );
 
     return FieldFrame(
       label: s.phoneLabel,
@@ -74,7 +85,10 @@ class _PhoneFieldState extends State<PhoneField> {
             children: [
               const _EgyptFlag(),
               const SizedBox(width: TayranSpace.s2),
-              Text(Digits.localize('+20', arabic: s.isArabic), style: TayranTypography.label.copyWith(color: c.ink)),
+              Text(
+                Digits.localize('+20', arabic: s.isArabic),
+                style: TayranTypography.label.copyWith(color: c.ink),
+              ),
               Container(
                 width: 1,
                 height: 28,
@@ -103,12 +117,19 @@ class _PhoneFieldState extends State<PhoneField> {
                     isCollapsed: true,
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                    hintText: Digits.localize('10 0000 0000', arabic: s.isArabic),
-                    hintStyle: numberStyle.copyWith(color: c.inkMuted, fontWeight: FontWeight.w500),
+                    hintText: Digits.localize(
+                      '10 0000 0000',
+                      arabic: s.isArabic,
+                    ),
+                    hintStyle: numberStyle.copyWith(
+                      color: c.inkMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-              if (valid && widget.error == null) TayranIcon('check', size: 20, strokeWidth: 2.5, color: c.ink),
+              if (valid && widget.error == null)
+                TayranIcon('check', size: 20, strokeWidth: 2.5, color: c.ink),
             ],
           ),
         ),
@@ -124,17 +145,24 @@ class _PhoneFormatter extends TextInputFormatter {
   final String Function(String digits) display;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final digits = EgyptPhone.digits(newValue.text);
     final text = display(digits);
-    return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 }
 
 class _EgyptFlag extends StatelessWidget {
   const _EgyptFlag();
 
-  static const _svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16">'
+  static const _svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16">'
       '<rect width="24" height="16" rx="2.5" fill="#ffffff"/>'
       '<path d="M0 2.5A2.5 2.5 0 0 1 2.5 0h19A2.5 2.5 0 0 1 24 2.5v2.8H0z" fill="#ce1126"/>'
       '<path d="M0 10.7h24v2.8a2.5 2.5 0 0 1-2.5 2.5h-19A2.5 2.5 0 0 1 0 13.5z" fill="#1c1714"/>'
@@ -142,5 +170,10 @@ class _EgyptFlag extends StatelessWidget {
       '<rect x=".5" y=".5" width="23" height="15" rx="2" fill="none" stroke="#1c171433"/></svg>';
 
   @override
-  Widget build(BuildContext context) => SvgPicture.string(_svg, width: 24, height: 16, excludeFromSemantics: true);
+  Widget build(BuildContext context) => SvgPicture.string(
+    _svg,
+    width: 24,
+    height: 16,
+    excludeFromSemantics: true,
+  );
 }

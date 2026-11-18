@@ -7,7 +7,10 @@ import 'api_exception.dart';
 
 /// Backend base URL. Android emulator default reaches the host machine through 10.0.2.2.
 /// Override with: flutter run `--dart-define=API_BASE_URL=http://HOST:8080/api/v1`
-const apiBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8080/api/v1');
+const apiBaseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'http://10.0.2.2:8080/api/v1',
+);
 
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient(ref));
 
@@ -29,7 +32,8 @@ class ApiClient {
 
   late final Dio _dio;
 
-  Future<dynamic> get(String path, {bool auth = true}) => _send(() => _dio.get(path, options: _opts(auth)));
+  Future<dynamic> get(String path, {bool auth = true}) =>
+      _send(() => _dio.get(path, options: _opts(auth)));
 
   Future<dynamic> post(String path, Object? body, {bool auth = true}) =>
       _send(() => _dio.post(path, data: body, options: _opts(auth)));
@@ -62,7 +66,8 @@ class AuthInterceptor extends QueuedInterceptor {
   final Ref _ref;
   final Dio _bare;
 
-  SessionController get _session => _ref.read(sessionControllerProvider.notifier);
+  SessionController get _session =>
+      _ref.read(sessionControllerProvider.notifier);
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -74,9 +79,13 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final options = err.requestOptions;
-    final eligible = err.response?.statusCode == 401 &&
+    final eligible =
+        err.response?.statusCode == 401 &&
         options.extra[authKey] != false &&
         options.extra[_retriedKey] != true;
     if (!eligible) return handler.next(err);
@@ -89,7 +98,10 @@ class AuthInterceptor extends QueuedInterceptor {
     final sentToken = options.headers['Authorization'];
     if (sentToken == 'Bearer ${current.accessToken}') {
       try {
-        final response = await _bare.post('/auth/refresh', data: {'refreshToken': current.refreshToken});
+        final response = await _bare.post(
+          '/auth/refresh',
+          data: {'refreshToken': current.refreshToken},
+        );
         final content = (response.data as Map)['content'] as Map;
         await _session.updateTokens(
           accessToken: content['accessToken'] as String,
@@ -97,7 +109,8 @@ class AuthInterceptor extends QueuedInterceptor {
           nextStep: NextStep.parse(content['nextStep'] as String),
         );
       } on DioException catch (e) {
-        if (e.response != null) await _session.signOut(); // rejected: the session is over
+        if (e.response != null)
+          await _session.signOut(); // rejected: the session is over
         return handler.next(err);
       }
     }

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// UI copy. Arabic (Egyptian) is the product's first language; English is the second locale.
 /// Wording follows the design export (its components' built-in copy and screen READMEs).
@@ -50,7 +50,8 @@ class S {
 
   // Flow
   String get back => _get('back');
-  String stepOf(int step, int total) => _get('stepOf', {'n': n(step), 'm': n(total)});
+  String stepOf(int step, int total) =>
+      _get('stepOf', {'n': n(step), 'm': n(total)});
   String get required => _get('required');
   String get loading => _get('loading');
   String get retry => _get('retry');
@@ -74,12 +75,14 @@ class S {
   String get street => _get('street');
   String get streetPlaceholder => _get('streetPlaceholder');
   String get streetNeedsVillage => _get('streetNeedsVillage');
-  String streetSheetTitle(String village) => _get('streetSheetTitle', {'v': village});
+  String streetSheetTitle(String village) =>
+      _get('streetSheetTitle', {'v': village});
   String get streetSearch => _get('streetSearch');
   String get landmark => _get('landmark');
   String get landmarkPlaceholder => _get('landmarkPlaceholder');
   String get landmarkTooShort => _get('landmarkTooShort');
-  String chars(int count, int max) => _get('chars', {'n': n(count), 'm': n(max)});
+  String chars(int count, int max) =>
+      _get('chars', {'n': n(count), 'm': n(max)});
   String get villageNotFound => _get('villageNotFound');
   String get notServedYet => _get('notServedYet');
   String get backToList => _get('backToList');
@@ -96,6 +99,52 @@ class S {
   String get searchLabel => _get('searchLabel');
   String get categories => _get('categories');
   String get seeAll => _get('seeAll');
+
+  // Catalog
+  String get all => _get('all');
+  String get offers => _get('offers');
+  String get sortSuggested => _get('sortSuggested');
+  String get sortLow => _get('sortLow');
+  String get sortHigh => _get('sortHigh');
+  String get sortLabel => _get('sortLabel');
+
+  /// "١٥ منتج", "منتجين", "٣ منتجات" (Arabic counts the noun by number).
+  String productCount(int count) {
+    if (!isArabic) return count == 1 ? '1 product' : '$count products';
+    if (count == 2) return 'منتجين';
+    if (count >= 3 && count <= 10) return '${n(count)} منتجات';
+    return '${n(count)} منتج';
+  }
+
+  /// "٥٥ ج.م" / "EGP 55"; 12.5 shows as ١٢٫٥٠.
+  String price(num value) {
+    final text = value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toStringAsFixed(2);
+    return isArabic ? '${n(text.replaceAll('.', '٫'))} ج.م' : 'EGP $text';
+  }
+
+  String discount(int percent) => _get('discount', {'p': n(percent)});
+  String get soldOut => _get('soldOut');
+  String get soldOutLong => _get('soldOutLong');
+  String get addToCart => _get('addToCart');
+  String get updateCart => _get('updateCart');
+  String get addedToCart => _get('addedToCart');
+  String get add => _get('add');
+  String get remove => _get('remove');
+  String get decrease => _get('decrease');
+  String get increase => _get('increase');
+  String get description => _get('description');
+  String get ingredients => _get('ingredients');
+  String get sameSection => _get('sameSection');
+  String get alternatives => _get('alternatives');
+  String get viewCart => _get('viewCart');
+  String get cartComingSoon => _get('cartComingSoon');
+  String get emptyCategory => _get('emptyCategory');
+  String get noOffers => _get('noOffers');
+  String get catalogFailed => _get('catalogFailed');
+  String get categoryGone => _get('categoryGone');
+  String get chooseCategory => _get('chooseCategory');
   String get tabHome => _get('tabHome');
   String get tabCategories => _get('tabCategories');
   String get tabSearch => _get('tabSearch');
@@ -108,18 +157,18 @@ class S {
 
   /// Maps the backend's stable error codes to friendly copy.
   String error(String? code) => _get(switch (code) {
-        'INVALID_PHONE' => 'phoneInvalid',
-        'OTP_INVALID' => 'otpWrong',
-        'OTP_EXPIRED' => 'errOtpExpired',
-        'OTP_TOO_MANY_ATTEMPTS' => 'errOtpTooMany',
-        'OTP_RESEND_TOO_SOON' => 'errResendTooSoon',
-        'OTP_RATE_LIMITED' => 'errRateLimited',
-        'VALIDATION_ERROR' => 'errValidation',
-        'INVALID_STREET' => 'errInvalidStreet',
-        'UNAUTHORIZED' || 'TOKEN_EXPIRED' => 'errSession',
-        'NETWORK' => 'errNetwork',
-        _ => 'errGeneric',
-      });
+    'INVALID_PHONE' => 'phoneInvalid',
+    'OTP_INVALID' => 'otpWrong',
+    'OTP_EXPIRED' => 'errOtpExpired',
+    'OTP_TOO_MANY_ATTEMPTS' => 'errOtpTooMany',
+    'OTP_RESEND_TOO_SOON' => 'errResendTooSoon',
+    'OTP_RATE_LIMITED' => 'errRateLimited',
+    'VALIDATION_ERROR' => 'errValidation',
+    'INVALID_STREET' => 'errInvalidStreet',
+    'UNAUTHORIZED' || 'TOKEN_EXPIRED' => 'errSession',
+    'NETWORK' => 'errNetwork',
+    _ => 'errGeneric',
+  });
 }
 
 const _ar = <String, String>{
@@ -183,6 +232,33 @@ const _ar = <String, String>{
   'searchLabel': 'البحث',
   'categories': 'الأقسام',
   'seeAll': 'الكل',
+  'all': 'الكل',
+  'offers': 'عروض',
+  'sortSuggested': 'المقترح',
+  'sortLow': 'الأرخص',
+  'sortHigh': 'الأغلى',
+  'sortLabel': 'الترتيب',
+  'discount': 'خصم {p}٪',
+  'soldOut': 'خلصان',
+  'soldOutLong': 'خلص من المخزن',
+  'addToCart': 'أضف للسلة',
+  'updateCart': 'حدّث السلة',
+  'addedToCart': 'اتضافت للسلة',
+  'add': 'أضف',
+  'remove': 'شيل من السلة',
+  'decrease': 'قلّل',
+  'increase': 'زوّد',
+  'description': 'الوصف',
+  'ingredients': 'المكونات',
+  'sameSection': 'من نفس القسم',
+  'alternatives': 'بدائل متوفرة',
+  'viewCart': 'عرض السلة',
+  'cartComingSoon': 'السلة والدفع جايين في التحديث الجاي',
+  'emptyCategory': 'مفيش منتجات هنا لسه',
+  'noOffers': 'مفيش عروض في القسم ده دلوقتي',
+  'catalogFailed': 'مقدرناش نحمّل المنتجات، اتأكد من النت وجرب تاني',
+  'categoryGone': 'القسم ده مش متاح دلوقتي',
+  'chooseCategory': 'اختار قسم',
   'tabHome': 'الرئيسية',
   'tabCategories': 'الأقسام',
   'tabSearch': 'البحث',
@@ -247,7 +323,8 @@ const _en = <String, String>{
   'streetSheetTitle': 'Streets in {v}',
   'streetSearch': 'Search streets',
   'landmark': 'Landmark',
-  'landmarkPlaceholder': 'e.g. next to Al Nour mosque, the house with the green door',
+  'landmarkPlaceholder':
+      'e.g. next to Al Nour mosque, the house with the green door',
   'landmarkTooShort': 'Add a little more detail',
   'chars': '{n}/{m}',
   'villageNotFound': 'Can\'t find your village?',
@@ -264,14 +341,44 @@ const _en = <String, String>{
   'searchLabel': 'Search',
   'categories': 'Categories',
   'seeAll': 'All',
+  'all': 'All',
+  'offers': 'Offers',
+  'sortSuggested': 'Suggested',
+  'sortLow': 'Lowest price',
+  'sortHigh': 'Highest price',
+  'sortLabel': 'Sort',
+  'discount': '{p}% off',
+  'soldOut': 'Sold out',
+  'soldOutLong': 'Out of stock',
+  'addToCart': 'Add to cart',
+  'updateCart': 'Update cart',
+  'addedToCart': 'Added to cart',
+  'add': 'Add',
+  'remove': 'Remove from cart',
+  'decrease': 'Decrease',
+  'increase': 'Increase',
+  'description': 'Description',
+  'ingredients': 'Ingredients',
+  'sameSection': 'From the same aisle',
+  'alternatives': 'In-stock alternatives',
+  'viewCart': 'View cart',
+  'cartComingSoon': 'Cart and checkout arrive in the next update',
+  'emptyCategory': 'No products here yet',
+  'noOffers': 'No offers in this category right now',
+  'catalogFailed':
+      'Couldn’t load the products. Check your connection and try again',
+  'categoryGone': 'This category isn’t available right now',
+  'chooseCategory': 'Choose a category',
   'tabHome': 'Home',
   'tabCategories': 'Categories',
   'tabSearch': 'Search',
   'tabOrders': 'Orders',
   'tabAccount': 'Account',
   'homeFailed': 'We couldn\'t load this page',
-  'bannerDelivery': 'Your order flies to you: everything for home, without leaving it',
-  'bannerBreakfast': 'Breakfast in minutes: baladi bread, cheese, eggs and milk at your door',
+  'bannerDelivery':
+      'Your order flies to you: everything for home, without leaving it',
+  'bannerBreakfast':
+      'Breakfast in minutes: baladi bread, cheese, eggs and milk at your door',
   'bannerPayment': 'Pay by Visa or wallet: safe and fast, or cash on delivery',
   'errOtpExpired': 'The code has expired, request a new one',
   'errOtpTooMany': 'Too many tries, request a new code',

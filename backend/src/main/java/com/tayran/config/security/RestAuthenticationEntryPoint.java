@@ -36,7 +36,8 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint, A
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        write(response, TayranConst.UNAUTHORIZED);
+        // Signed in, but not allowed (for example a customer token on an admin endpoint).
+        write(response, TayranConst.FORBIDDEN);
     }
 
     private void write(HttpServletResponse response, String code) throws IOException {

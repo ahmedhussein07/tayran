@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_screen.dart';
+import '../../features/catalog/presentation/category_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/address_screen.dart';
 import '../../features/onboarding/presentation/name_screen.dart';
@@ -19,11 +20,14 @@ abstract final class Routes {
   static const address = '/address';
   static const home = '/home';
 
+  /// A category listing, pushed over home.
+  static String category(int id) => '/home/category/$id';
+
   static String forStep(NextStep step) => switch (step) {
-        NextStep.name => name,
-        NextStep.address => address,
-        NextStep.home => home,
-      };
+    NextStep.name => name,
+    NextStep.address => address,
+    NextStep.home => home,
+  };
 }
 
 /// Routing follows the session: signed out → phone/OTP; signed in → the screen for `nextStep`.
@@ -40,8 +44,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final location = state.matchedLocation;
       return switch (ref.read(sessionControllerProvider)) {
         AuthUnknown() => location == Routes.splash ? null : Routes.splash,
-        AuthSignedOut() => (location == Routes.phone || location == Routes.otp) ? null : Routes.phone,
-        AuthSignedIn(:final session) => _signedInRedirect(session.nextStep, location),
+        AuthSignedOut() =>
+          (location == Routes.phone || location == Routes.otp)
+              ? null
+              : Routes.phone,
+        AuthSignedIn(:final session) => _signedInRedirect(
+          session.nextStep,
+          location,
+        ),
       };
     },
     routes: [
@@ -50,7 +60,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.otp, builder: (_, _) => const OtpScreen()),
       GoRoute(path: Routes.name, builder: (_, _) => const NameScreen()),
       GoRoute(path: Routes.address, builder: (_, _) => const AddressScreen()),
-      GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
+      GoRoute(
+        path: Routes.home,
+        builder: (_, _) => const HomeScreen(),
+        routes: [
+          GoRoute(
+            path: 'category/:id',
+            builder: (_, state) => CategoryScreen(
+              categoryId: int.parse(state.pathParameters['id']!),
+            ),
+          ),
+        ],
+      ),
     ],
   );
   ref.onDispose(router.dispose);
@@ -61,6 +82,9 @@ String? _signedInRedirect(NextStep step, String location) {
   // From the address step the user may go back to edit the name.
   if (step == NextStep.address && location == Routes.name) return null;
   final target = Routes.forStep(step);
+  // Screens pushed over home (a category) stay where they are.
+  if (target == Routes.home && location.startsWith('${Routes.home}/'))
+    return null;
   return location == target ? null : target;
 }
 
@@ -76,7 +100,9 @@ class _Splash extends StatelessWidget {
       color: dark ? const Color(0xFF1C1714) : const Color(0xFFFA7400),
       child: Center(
         child: SvgPicture.asset(
-          dark ? 'assets/brand/splash_mark_dark.svg' : 'assets/brand/splash_mark.svg',
+          dark
+              ? 'assets/brand/splash_mark_dark.svg'
+              : 'assets/brand/splash_mark.svg',
           width: 192, // the native splash image is 768px at xxxhdpi = 192dp
           height: 192,
           excludeFromSemantics: true,

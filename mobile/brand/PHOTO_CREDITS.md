@@ -1,3 +1,5 @@
+> **Removed in Phase 2.** Category images now come from the admin portal through the image pipeline and the CDN; the bundled photos below are no longer in the app. Kept for the record.
+
 # Category photos
 
 Bundled in `assets/categories/photos/`, one per main category (named by its `icon_key`).

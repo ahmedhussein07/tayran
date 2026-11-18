@@ -1,0 +1,11 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - web/**
+
+linter:
+  rules:
+    # Single-line guard clauses (`if (x) return;`) read fine; keep them.
+    curly_braces_in_flow_control_structures: false

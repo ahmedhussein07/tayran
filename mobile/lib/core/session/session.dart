@@ -8,22 +8,32 @@ enum NextStep {
 
   final String wire;
 
-  static NextStep parse(String value) =>
-      NextStep.values.firstWhere((s) => s.wire == value, orElse: () => NextStep.name);
+  static NextStep parse(String value) => NextStep.values.firstWhere(
+    (s) => s.wire == value,
+    orElse: () => NextStep.name,
+  );
 }
 
 class Session {
-  const Session({required this.accessToken, required this.refreshToken, required this.nextStep});
+  const Session({
+    required this.accessToken,
+    required this.refreshToken,
+    required this.nextStep,
+  });
 
   final String accessToken;
   final String refreshToken;
   final NextStep nextStep;
 
-  Session copyWith({String? accessToken, String? refreshToken, NextStep? nextStep}) => Session(
-        accessToken: accessToken ?? this.accessToken,
-        refreshToken: refreshToken ?? this.refreshToken,
-        nextStep: nextStep ?? this.nextStep,
-      );
+  Session copyWith({
+    String? accessToken,
+    String? refreshToken,
+    NextStep? nextStep,
+  }) => Session(
+    accessToken: accessToken ?? this.accessToken,
+    refreshToken: refreshToken ?? this.refreshToken,
+    nextStep: nextStep ?? this.nextStep,
+  );
 }
 
 /// The app-wide auth state the router follows.

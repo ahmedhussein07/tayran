@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
-import '../format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../l10n/strings.dart';
-import '../theme/tokens.dart';
 
 /// The verification code: large digit boxes over one hidden input, so typing, deleting, pasting
 /// and SMS autofill all work without moving focus between boxes. Left to right in both languages.
@@ -35,10 +35,14 @@ class OtpField extends StatefulWidget {
 
 class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
   final _focus = FocusNode();
-  late final AnimationController _shake =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 420));
-  late final AnimationController _caret =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat();
+  late final AnimationController _shake = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 420),
+  );
+  late final AnimationController _caret = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1000),
+  )..repeat();
 
   @override
   void initState() {
@@ -80,7 +84,16 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
       children: [
         for (var i = 0; i < widget.length; i++) ...[
           if (i > 0) const SizedBox(width: TayranSpace.s3),
-          _box(context, i, code, active: _focus.hasFocus && !widget.hasError && i == activeIndex && code.length < widget.length),
+          _box(
+            context,
+            i,
+            code,
+            active:
+                _focus.hasFocus &&
+                !widget.hasError &&
+                i == activeIndex &&
+                code.length < widget.length,
+          ),
         ],
       ],
     );
@@ -97,8 +110,13 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
                 animation: _shake,
                 builder: (context, child) {
                   final t = _shake.value;
-                  final dx = t == 0 || t == 1 ? 0.0 : math.sin(t * math.pi * 6) * 8 * (1 - t);
-                  return Transform.translate(offset: Offset(dx, 0), child: child);
+                  final dx = t == 0 || t == 1
+                      ? 0.0
+                      : math.sin(t * math.pi * 6) * 8 * (1 - t);
+                  return Transform.translate(
+                    offset: Offset(dx, 0),
+                    child: child,
+                  );
                 },
                 child: boxes,
               ),
@@ -120,11 +138,18 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
                     autofillHints: const [AutofillHints.oneTimeCode],
                     textDirection: TextDirection.ltr,
                     inputFormatters: [_OtpFormatter(widget.length)],
-                    style: const TextStyle(color: Colors.transparent, fontSize: 16),
-                    decoration: const InputDecoration(border: InputBorder.none, counterText: ''),
+                    style: const TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 16,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      counterText: '',
+                    ),
                     onChanged: (value) {
                       widget.onChanged?.call(value);
-                      if (value.length == widget.length) widget.onCompleted(value);
+                      if (value.length == widget.length)
+                        widget.onCompleted(value);
                     },
                   ),
                 ),
@@ -137,26 +162,40 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
           Text(
             widget.errorText!,
             textAlign: TextAlign.center,
-            style: TayranTypography.caption.copyWith(color: c.danger, fontWeight: FontWeight.w600),
+            style: TayranTypography.caption.copyWith(
+              color: c.danger,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
-        Semantics(label: s.otpLabel, value: code, child: const SizedBox.shrink()),
+        Semantics(
+          label: s.otpLabel,
+          value: code,
+          child: const SizedBox.shrink(),
+        ),
       ],
     );
   }
 
-  Widget _box(BuildContext context, int index, String code, {required bool active}) {
+  Widget _box(
+    BuildContext context,
+    int index,
+    String code, {
+    required bool active,
+  }) {
     final c = context.colors;
     final filled = index < code.length;
     final error = widget.hasError;
-    final digit = filled ? Digits.localize(code[index], arabic: context.s.isArabic) : '';
+    final digit = filled
+        ? Digits.localize(code[index], arabic: context.s.isArabic)
+        : '';
 
     final Color background = error ? c.dangerSoft : c.field;
     final Border border = error
         ? Border.all(color: c.danger, width: 2)
         : active
-            ? Border.all(color: c.brand, width: 2)
-            : Border.all(color: filled ? c.lineStrong : c.line, width: 1.5);
+        ? Border.all(color: c.brand, width: 2)
+        : Border.all(color: filled ? c.lineStrong : c.line, width: 1.5);
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 150),
@@ -170,19 +209,26 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
           color: background,
           borderRadius: BorderRadius.circular(TayranRadius.md),
           border: border,
-          boxShadow: active ? [BoxShadow(color: c.tint, spreadRadius: 4)] : null,
+          boxShadow: active
+              ? [BoxShadow(color: c.tint, spreadRadius: 4)]
+              : null,
         ),
         child: active && !filled
             ? FadeTransition(
-                opacity: _caret.drive(TweenSequence([
-                  TweenSequenceItem(tween: ConstantTween(1.0), weight: 1),
-                  TweenSequenceItem(tween: ConstantTween(0.0), weight: 1),
-                ])),
+                opacity: _caret.drive(
+                  TweenSequence([
+                    TweenSequenceItem(tween: ConstantTween(1.0), weight: 1),
+                    TweenSequenceItem(tween: ConstantTween(0.0), weight: 1),
+                  ]),
+                ),
                 child: Container(width: 2, height: 30, color: c.ink),
               )
             : Text(
                 digit,
-                style: TayranTypography.titleLg.copyWith(fontSize: 28, color: error ? c.danger : c.ink),
+                style: TayranTypography.titleLg.copyWith(
+                  fontSize: 28,
+                  color: error ? c.danger : c.ink,
+                ),
               ),
       ),
     );
@@ -192,9 +238,12 @@ class _OtpFieldState extends State<OtpField> with TickerProviderStateMixin {
 /// Material selection behaviour without the drag handles.
 class _NoHandleSelectionControls extends MaterialTextSelectionControls {
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type, double textLineHeight,
-          [VoidCallback? onTap]) =>
-      const SizedBox.shrink();
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textLineHeight, [
+    VoidCallback? onTap,
+  ]) => const SizedBox.shrink();
 
   @override
   Size getHandleSize(double textLineHeight) => Size.zero;
@@ -206,9 +255,15 @@ class _OtpFormatter extends TextInputFormatter {
   final int length;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     var digits = Digits.toWestern(newValue.text).replaceAll(RegExp(r'\D'), '');
     if (digits.length > length) digits = digits.substring(0, length);
-    return TextEditingValue(text: digits, selection: TextSelection.collapsed(offset: digits.length));
+    return TextEditingValue(
+      text: digits,
+      selection: TextSelection.collapsed(offset: digits.length),
+    );
   }
 }

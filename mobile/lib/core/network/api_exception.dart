@@ -2,7 +2,11 @@ import 'package:dio/dio.dart';
 
 /// An error from the API in the unified format ({success:false, code, ...}), or a network failure.
 class ApiException implements Exception {
-  const ApiException({required this.code, this.status, this.details = const {}});
+  const ApiException({
+    required this.code,
+    this.status,
+    this.details = const {},
+  });
 
   /// The backend's stable error code (OTP_INVALID, ...), or NETWORK / UNKNOWN.
   final String code;

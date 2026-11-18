@@ -1,29 +1,27 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
-
-import '../../../../core/theme/tokens.dart';
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// The design's CategoryTile: a square tile on the category's pastel, with the name under it in
-/// navy (never on the pastel). Shows the category photo when one is bundled, otherwise the
-/// category illustration at 76%.
+/// navy (never on the pastel). The image comes from the CDN, chosen by the admin.
 class CategoryTile extends StatefulWidget {
-  const CategoryTile({super.key, required this.label, required this.iconKey, required this.colorToken, this.onTap});
+  const CategoryTile({
+    super.key,
+    required this.label,
+    required this.imageHash,
+    required this.imageBg,
+    required this.tile,
+    required this.templates,
+    this.onTap,
+  });
 
   final String label;
+  final String? imageHash;
+  final String? imageBg;
 
-  /// Backend icon key: picks `assets/categories/photos/{iconKey}.jpg`, or the illustration
-  /// `assets/categories/{iconKey}.svg`.
-  final String iconKey;
-
-  /// Backend pastel token, e.g. "pastel-mint".
-  final String colorToken;
+  /// Pastel token, e.g. "pastel-mint".
+  final String tile;
+  final ImageTemplates? templates;
   final VoidCallback? onTap;
-
-  static const illustrations = {'produce', 'bread', 'dairy', 'chicken', 'chips', 'juice', 'spray', 'pump'};
-
-  /// Categories that have a bundled photo (sources in brand/PHOTO_CREDITS.md). Stand-ins until
-  /// catalogue cut-outs exist: these have their own backgrounds, so they fill the tile.
-  static const photos = {'produce', 'bread', 'dairy', 'chicken', 'chips', 'juice', 'spray', 'pump'};
 
   @override
   State<CategoryTile> createState() => _CategoryTileState();
@@ -35,20 +33,7 @@ class _CategoryTileState extends State<CategoryTile> {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final key = widget.iconKey;
-    final Widget art;
-    if (CategoryTile.photos.contains(key)) {
-      art = Image.asset('assets/categories/photos/$key.jpg', fit: BoxFit.cover, width: double.infinity, height: double.infinity);
-    } else if (CategoryTile.illustrations.contains(key)) {
-      art = FractionallySizedBox(
-        widthFactor: .76,
-        heightFactor: .76,
-        child: SvgPicture.asset('assets/categories/$key.svg', fit: BoxFit.contain),
-      );
-    } else {
-      art = const SizedBox.shrink();
-    }
-
+    final pastel = c.pastel(widget.tile);
     return Semantics(
       button: true,
       label: widget.label,
@@ -71,10 +56,21 @@ class _CategoryTileState extends State<CategoryTile> {
                   clipBehavior: Clip.antiAlias,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: c.pastel(widget.colorToken),
+                    color: pastel,
                     borderRadius: BorderRadius.circular(TayranRadius.md),
                   ),
-                  child: art,
+                  // The pipeline already pads images 8%; a little more keeps the art off the corners.
+                  child: FractionallySizedBox(
+                    widthFactor: .9,
+                    heightFactor: .9,
+                    child: TayranImage(
+                      hash: widget.imageHash,
+                      bg: widget.imageBg,
+                      kind: TayranImageKind.category,
+                      templates: widget.templates,
+                      placeholderColor: pastel,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -84,7 +80,11 @@ class _CategoryTileState extends State<CategoryTile> {
               maxLines: 1,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
-              style: TayranTypography.caption.copyWith(color: c.ink, fontWeight: FontWeight.w600, height: 16 / 12),
+              style: TayranTypography.caption.copyWith(
+                color: c.ink,
+                fontWeight: FontWeight.w600,
+                height: 16 / 12,
+              ),
             ),
           ],
         ),

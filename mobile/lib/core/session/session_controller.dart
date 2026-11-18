@@ -5,7 +5,8 @@ import 'session.dart';
 
 final sessionStoreProvider = Provider<SessionStore>((ref) => SessionStore());
 
-final sessionControllerProvider = NotifierProvider<SessionController, AuthState>(SessionController.new);
+final sessionControllerProvider =
+    NotifierProvider<SessionController, AuthState>(SessionController.new);
 
 /// Owns the session: restores it on launch, saves new tokens, tracks the next step, signs out.
 class SessionController extends Notifier<AuthState> {
@@ -29,9 +30,9 @@ class SessionController extends Notifier<AuthState> {
   }
 
   Session? get session => switch (state) {
-        AuthSignedIn(:final session) => session,
-        _ => null,
-      };
+    AuthSignedIn(:final session) => session,
+    _ => null,
+  };
 
   Future<void> signIn(Session session) async {
     await _store.write(session);
@@ -39,10 +40,20 @@ class SessionController extends Notifier<AuthState> {
   }
 
   /// After a token refresh: keeps the user where they are, with fresh tokens.
-  Future<void> updateTokens({required String accessToken, required String refreshToken, NextStep? nextStep}) async {
+  Future<void> updateTokens({
+    required String accessToken,
+    required String refreshToken,
+    NextStep? nextStep,
+  }) async {
     final current = session;
     if (current == null) return;
-    await signIn(current.copyWith(accessToken: accessToken, refreshToken: refreshToken, nextStep: nextStep));
+    await signIn(
+      current.copyWith(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        nextStep: nextStep,
+      ),
+    );
   }
 
   Future<void> setNextStep(NextStep step) async {

@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/strings.dart';
-import '../theme/tokens.dart';
-import 'tayran_icon.dart';
+
+import 'package:tayran_ui/tayran_ui.dart';
 
 class PickerItem {
   const PickerItem({required this.id, required this.label});
@@ -16,7 +16,8 @@ class PickerItem {
 String foldArabic(String input) {
   final buffer = StringBuffer();
   for (final rune in input.toLowerCase().runes) {
-    if ((rune >= 0x064B && rune <= 0x065F) || rune == 0x0670 || rune == 0x0640) continue;
+    if ((rune >= 0x064B && rune <= 0x065F) || rune == 0x0670 || rune == 0x0640)
+      continue;
     buffer.writeCharCode(switch (rune) {
       0x0623 || 0x0625 || 0x0622 || 0x0671 => 0x0627,
       0x0629 => 0x0647,
@@ -36,8 +37,10 @@ Future<PickerItem?> showPickerSheet({
   required List<PickerItem> items,
   required String searchPlaceholder,
   int? selectedId,
-  Widget Function(BuildContext context, VoidCallback showMessage)? footerBuilder,
-  Widget Function(BuildContext context, VoidCallback backToList)? messageBuilder,
+  Widget Function(BuildContext context, VoidCallback showMessage)?
+  footerBuilder,
+  Widget Function(BuildContext context, VoidCallback backToList)?
+  messageBuilder,
 }) {
   return showModalBottomSheet<PickerItem>(
     context: context,
@@ -72,8 +75,10 @@ class _PickerSheet extends StatefulWidget {
   final List<PickerItem> items;
   final String searchPlaceholder;
   final int? selectedId;
-  final Widget Function(BuildContext context, VoidCallback showMessage)? footerBuilder;
-  final Widget Function(BuildContext context, VoidCallback backToList)? messageBuilder;
+  final Widget Function(BuildContext context, VoidCallback showMessage)?
+  footerBuilder;
+  final Widget Function(BuildContext context, VoidCallback backToList)?
+  messageBuilder;
 
   @override
   State<_PickerSheet> createState() => _PickerSheetState();
@@ -94,7 +99,9 @@ class _PickerSheetState extends State<_PickerSheet> {
     final c = context.colors;
     final s = context.s;
     final q = foldArabic(_query.text);
-    final visible = q.isEmpty ? widget.items : widget.items.where((i) => foldArabic(i.label).contains(q)).toList();
+    final visible = q.isEmpty
+        ? widget.items
+        : widget.items.where((i) => foldArabic(i.label).contains(q)).toList();
 
     return Column(
       children: [
@@ -114,7 +121,12 @@ class _PickerSheetState extends State<_PickerSheet> {
         ),
         // Pinned title + search
         Container(
-          padding: const EdgeInsets.fromLTRB(TayranSpace.s4, 4, TayranSpace.s4, TayranSpace.s3),
+          padding: const EdgeInsets.fromLTRB(
+            TayranSpace.s4,
+            4,
+            TayranSpace.s4,
+            TayranSpace.s3,
+          ),
           decoration: BoxDecoration(
             color: c.surfaceRaised,
             border: Border(bottom: BorderSide(color: c.line)),
@@ -123,7 +135,12 @@ class _PickerSheetState extends State<_PickerSheet> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(widget.title, style: TayranTypography.title.copyWith(color: c.ink))),
+                  Expanded(
+                    child: Text(
+                      widget.title,
+                      style: TayranTypography.title.copyWith(color: c.ink),
+                    ),
+                  ),
                   Semantics(
                     button: true,
                     label: s.close,
@@ -134,8 +151,19 @@ class _PickerSheetState extends State<_PickerSheet> {
                       child: Container(
                         width: 36,
                         height: 36,
-                        decoration: BoxDecoration(color: c.field, shape: BoxShape.circle, border: Border.all(color: c.line)),
-                        child: Center(child: TayranIcon('close', size: 18, strokeWidth: 2.25, color: c.ink)),
+                        decoration: BoxDecoration(
+                          color: c.field,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: c.line),
+                        ),
+                        child: Center(
+                          child: TayranIcon(
+                            'close',
+                            size: 18,
+                            strokeWidth: 2.25,
+                            color: c.ink,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -143,32 +171,56 @@ class _PickerSheetState extends State<_PickerSheet> {
               ),
               if (!_showMessage) ...[
                 const SizedBox(height: TayranSpace.s3),
-                _SearchBox(controller: _query, placeholder: widget.searchPlaceholder, onChanged: () => setState(() {})),
+                _SearchBox(
+                  controller: _query,
+                  placeholder: widget.searchPlaceholder,
+                  onChanged: () => setState(() {}),
+                ),
               ],
             ],
           ),
         ),
         Expanded(
           child: _showMessage && widget.messageBuilder != null
-              ? Center(child: widget.messageBuilder!(context, () => setState(() => _showMessage = false)))
+              ? Center(
+                  child: widget.messageBuilder!(
+                    context,
+                    () => setState(() => _showMessage = false),
+                  ),
+                )
               : ListView(
                   padding: const EdgeInsets.symmetric(vertical: TayranSpace.s1),
                   children: [
                     if (visible.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4, vertical: TayranSpace.s6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: TayranSpace.s4,
+                          vertical: TayranSpace.s6,
+                        ),
                         child: Text(
                           s.noResults(_query.text.trim()),
                           textAlign: TextAlign.center,
-                          style: TayranTypography.body.copyWith(color: c.inkMuted),
+                          style: TayranTypography.body.copyWith(
+                            color: c.inkMuted,
+                          ),
                         ),
                       ),
                     for (var i = 0; i < visible.length; i++)
                       _option(context, visible[i], divider: i > 0),
                     if (widget.footerBuilder != null)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s3, TayranSpace.s4, TayranSpace.s6),
-                        child: Center(child: widget.footerBuilder!(context, () => setState(() => _showMessage = true))),
+                        padding: const EdgeInsets.fromLTRB(
+                          TayranSpace.s4,
+                          TayranSpace.s3,
+                          TayranSpace.s4,
+                          TayranSpace.s6,
+                        ),
+                        child: Center(
+                          child: widget.footerBuilder!(
+                            context,
+                            () => setState(() => _showMessage = true),
+                          ),
+                        ),
                       ),
                   ],
                 ),
@@ -177,7 +229,11 @@ class _PickerSheetState extends State<_PickerSheet> {
     );
   }
 
-  Widget _option(BuildContext context, PickerItem item, {required bool divider}) {
+  Widget _option(
+    BuildContext context,
+    PickerItem item, {
+    required bool divider,
+  }) {
     final c = context.colors;
     final selected = item.id == widget.selectedId;
     return Material(
@@ -186,8 +242,13 @@ class _PickerSheetState extends State<_PickerSheet> {
         onTap: () => Navigator.of(context).pop(item),
         child: Container(
           constraints: const BoxConstraints(minHeight: 52),
-          padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s4, vertical: TayranSpace.s2),
-          decoration: BoxDecoration(border: divider ? Border(top: BorderSide(color: c.line)) : null),
+          padding: const EdgeInsets.symmetric(
+            horizontal: TayranSpace.s4,
+            vertical: TayranSpace.s2,
+          ),
+          decoration: BoxDecoration(
+            border: divider ? Border(top: BorderSide(color: c.line)) : null,
+          ),
           child: Row(
             children: [
               Expanded(
@@ -199,7 +260,8 @@ class _PickerSheetState extends State<_PickerSheet> {
                   ),
                 ),
               ),
-              if (selected) TayranIcon('check', size: 20, strokeWidth: 2.5, color: c.ink),
+              if (selected)
+                TayranIcon('check', size: 20, strokeWidth: 2.5, color: c.ink),
             ],
           ),
         ),
@@ -209,7 +271,11 @@ class _PickerSheetState extends State<_PickerSheet> {
 }
 
 class _SearchBox extends StatelessWidget {
-  const _SearchBox({required this.controller, required this.placeholder, required this.onChanged});
+  const _SearchBox({
+    required this.controller,
+    required this.placeholder,
+    required this.onChanged,
+  });
 
   final TextEditingController controller;
   final String placeholder;

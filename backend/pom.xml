@@ -20,7 +20,21 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jjwt.version>0.13.0</jjwt.version>
 		<springdoc.version>3.2.0</springdoc.version>
+		<scrimage.version>4.6.11</scrimage.version>
+		<awssdk.version>2.59.3</awssdk.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${awssdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -77,6 +91,22 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>${jjwt.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<!-- Image pipeline: decode, resize, WebP (bundles cwebp for Windows, Linux and macOS). -->
+		<dependency>
+			<groupId>com.sksamuel.scrimage</groupId>
+			<artifactId>scrimage-core</artifactId>
+			<version>${scrimage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sksamuel.scrimage</groupId>
+			<artifactId>scrimage-webp</artifactId>
+			<version>${scrimage.version}</version>
+		</dependency>
+		<!-- Cloudflare R2 through the S3 API (r2 profile). -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>

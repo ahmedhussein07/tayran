@@ -2,7 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// The phone being verified and its current challenge, shared by the phone and code screens.
 class OtpFlow {
-  const OtpFlow({required this.phoneDigits, required this.challengeId, required this.resendAfterSeconds, required this.attempt});
+  const OtpFlow({
+    required this.phoneDigits,
+    required this.challengeId,
+    required this.resendAfterSeconds,
+    required this.attempt,
+  });
 
   /// The 10 national digits ("1012345678").
   final String phoneDigits;
@@ -13,13 +18,19 @@ class OtpFlow {
   final int attempt;
 }
 
-final otpFlowProvider = NotifierProvider<OtpFlowController, OtpFlow?>(OtpFlowController.new);
+final otpFlowProvider = NotifierProvider<OtpFlowController, OtpFlow?>(
+  OtpFlowController.new,
+);
 
 class OtpFlowController extends Notifier<OtpFlow?> {
   @override
   OtpFlow? build() => null;
 
-  void start({required String phoneDigits, required String challengeId, required int resendAfterSeconds}) {
+  void start({
+    required String phoneDigits,
+    required String challengeId,
+    required int resendAfterSeconds,
+  }) {
     state = OtpFlow(
       phoneDigits: phoneDigits,
       challengeId: challengeId,

@@ -1,0 +1,262 @@
+{
+  "_comment": "TEST DATA ONLY (dev profile). Loaded by DevCatalogSeeder; images are seed-images/{img}.png run through the real pipeline. A product with no img shows the app's neutral fallback.",
+  "categories": [
+    {
+      "nameAr": "خضار وفاكهة", "nameEn": "Fruits & vegetables", "tile": "pastel-mint", "image": "produce",
+      "subcategories": [
+        { "nameAr": "خضار", "nameEn": "Vegetables", "products": [
+          { "ar": "طماطم", "en": "Tomatoes", "size": "1 كيلو", "price": 24, "old": 28, "img": "tomato", "desc": "طماطم بلدي حمرا ومليانة، مناسبة للسلطة والطبيخ." },
+          { "ar": "خيار", "en": "Cucumbers", "size": "1 كيلو", "price": 20, "img": "cucumber", "desc": "خيار بلدي صغير ومقرمش." },
+          { "ar": "جزر", "en": "Carrots", "size": "1 كيلو", "price": 18, "img": "carrot", "desc": "جزر طازة للعصير والطبيخ." },
+          { "ar": "بطاطس", "en": "Potatoes", "size": "1 كيلو", "price": 16, "img": "produce", "desc": "بطاطس للقلي والفرن." },
+          { "ar": "بصل أحمر", "en": "Red onions", "size": "1 كيلو", "price": 14, "img": "produce" },
+          { "ar": "فلفل رومي", "en": "Bell peppers", "size": "500 جم", "price": 22, "img": "produce" },
+          { "ar": "كوسة", "en": "Zucchini", "size": "1 كيلو", "price": 26, "img": "produce", "desc": "كوسة صغيرة للمحشي." },
+          { "ar": "باذنجان رومي", "en": "Eggplant", "size": "1 كيلو", "price": 19, "img": "produce" }
+        ]},
+        { "nameAr": "فاكهة", "nameEn": "Fruit", "products": [
+          { "ar": "موز", "en": "Bananas", "size": "1 كيلو", "price": 32, "old": 38, "img": "banana", "desc": "موز بلدي مستوي." },
+          { "ar": "برتقال بلدي", "en": "Oranges", "size": "1 كيلو", "price": 22, "img": "produce", "desc": "برتقال للعصير، حلو ومليان مية." },
+          { "ar": "تفاح أحمر", "en": "Red apples", "size": "1 كيلو", "price": 65, "img": "produce" },
+          { "ar": "عنب بناتي", "en": "Grapes", "size": "1 كيلو", "price": 45, "img": "produce" },
+          { "ar": "جوافة", "en": "Guava", "size": "1 كيلو", "price": 30, "img": "produce" },
+          { "ar": "مانجا عويسي", "en": "Mangoes", "size": "1 كيلو", "price": 80, "img": "produce", "available": false, "desc": "مانجا عويسي، موسمها قرب يخلص." },
+          { "ar": "ليمون بلدي", "en": "Lemons", "size": "500 جم", "price": 15, "img": "produce" }
+        ]},
+        { "nameAr": "ورقيات وأعشاب", "nameEn": "Greens & herbs", "products": [
+          { "ar": "خس بلدي", "en": "Lettuce", "size": "1 حبة", "price": 8, "img": "produce" },
+          { "ar": "جرجير", "en": "Rocket", "size": "1 حزمة", "price": 4, "img": "produce" },
+          { "ar": "بقدونس", "en": "Parsley", "size": "1 حزمة", "price": 4, "img": "produce" },
+          { "ar": "كزبرة خضرا", "en": "Coriander", "size": "1 حزمة", "price": 4, "img": "produce" },
+          { "ar": "شبت", "en": "Dill", "size": "1 حزمة", "price": 4, "img": "produce" },
+          { "ar": "نعناع", "en": "Mint", "size": "1 حزمة", "price": 5, "img": "produce" },
+          { "ar": "ملوخية خضرا", "en": "Molokhia", "size": "500 جم", "price": 15, "img": "produce", "desc": "ملوخية طازة، اطلبها مخرطة جاهزة." }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "مخبوزات", "nameEn": "Bakery", "tile": "pastel-wheat", "image": "bread",
+      "subcategories": [
+        { "nameAr": "عيش", "nameEn": "Bread", "products": [
+          { "ar": "عيش بلدي", "en": "Baladi bread", "size": "5 أرغفة", "price": 10, "img": "bread", "desc": "عيش بلدي سخن من الفرن الصبح." },
+          { "ar": "عيش شامي", "en": "Shami bread", "size": "5 أرغفة", "price": 12, "img": "bread" },
+          { "ar": "عيش فينو", "en": "Fino rolls", "size": "6 حبات", "price": 15, "img": "bread" },
+          { "ar": "عيش توست أبيض", "en": "White toast", "size": "600 جم", "price": 38, "img": "bread" },
+          { "ar": "عيش توست بر", "en": "Brown toast", "size": "600 جم", "price": 42, "old": 48, "img": "bread" },
+          { "ar": "عيش سن", "en": "Bran bread", "size": "5 أرغفة", "price": 14, "img": "bread" },
+          { "ar": "بقسماط", "en": "Rusks", "size": "300 جم", "price": 30, "img": "bread" }
+        ]},
+        { "nameAr": "معجنات", "nameEn": "Pastries", "products": [
+          { "ar": "كرواسون سادة", "en": "Plain croissant", "size": "4 حبات", "price": 45, "img": "bread" },
+          { "ar": "كرواسون شوكولاتة", "en": "Chocolate croissant", "size": "4 حبات", "price": 55, "img": "bread" },
+          { "ar": "فطير مشلتت", "en": "Feteer meshaltet", "size": "1 قطعة", "price": 90, "img": "bread", "desc": "فطير مشلتت بالسمنة البلدي." },
+          { "ar": "بريوش", "en": "Brioche", "size": "6 حبات", "price": 40, "img": "bread" },
+          { "ar": "كيك بالبرتقال", "en": "Orange cake", "size": "400 جم", "price": 60, "img": "bread" },
+          { "ar": "بسكويت بالسمسم", "en": "Sesame biscuits", "size": "500 جم", "price": 48, "img": "bread" },
+          { "ar": "كعك سادة", "en": "Kahk", "size": "500 جم", "price": 120, "old": 140, "img": "bread" }
+        ]},
+        { "nameAr": "فطار سريع", "nameEn": "Quick breakfast", "products": [
+          { "ar": "فول مدمس", "en": "Foul medames", "size": "400 جم", "price": 18, "img": null, "desc": "فول مدمس جاهز، سخنه بس." },
+          { "ar": "طعمية", "en": "Ta'meya", "size": "10 قطع", "price": 20, "img": null },
+          { "ar": "جبنة بالطماطم", "en": "Cheese with tomato", "size": "250 جم", "price": 28, "img": "white-cheese" },
+          { "ar": "عسل نحل", "en": "Honey", "size": "450 جم", "price": 140, "img": null },
+          { "ar": "مربى فراولة", "en": "Strawberry jam", "size": "450 جم", "price": 55, "img": null },
+          { "ar": "حلاوة طحينية", "en": "Halawa", "size": "500 جم", "price": 75, "img": null },
+          { "ar": "زبدة فول سوداني", "en": "Peanut butter", "size": "340 جم", "price": 95, "img": "butter" }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "ألبان وبيض", "nameEn": "Dairy & eggs", "tile": "pastel-sky", "image": "dairy",
+      "subcategories": [
+        { "nameAr": "لبن", "nameEn": "Milk", "products": [
+          { "ar": "لبن كامل الدسم", "en": "Full-fat milk", "size": "1 لتر", "price": 42, "img": "milk-full", "desc": "لبن بقري طازة كامل الدسم.", "ingr": "لبن بقري كامل الدسم." },
+          { "ar": "لبن خالي الدسم", "en": "Skimmed milk", "size": "1 لتر", "price": 40, "img": "milk-skim", "ingr": "لبن بقري خالي الدسم." },
+          { "ar": "لبن بالشوكولاتة", "en": "Chocolate milk", "size": "250 مل", "price": 15, "img": "choco-milk", "ingr": "لبن، سكر، كاكاو." },
+          { "ar": "لبن نص دسم", "en": "Half-fat milk", "size": "1 لتر", "price": 41, "img": "milk" },
+          { "ar": "لبن بقري طازة", "en": "Fresh cow's milk", "size": "1 لتر", "price": 35, "old": 40, "img": "milk", "desc": "لبن بقري من المزرعة، اغليه قبل الاستعمال." },
+          { "ar": "لبن جاموسي", "en": "Buffalo milk", "size": "1 لتر", "price": 45, "img": "milk" },
+          { "ar": "رايب", "en": "Rayeb", "size": "1 لتر", "price": 30, "img": "rayeb", "ingr": "لبن رايب، مزارع بكتيرية." }
+        ]},
+        { "nameAr": "زبادي وجبن", "nameEn": "Yogurt & cheese", "products": [
+          { "ar": "زبادي طبيعي", "en": "Plain yogurt", "size": "170 جم", "price": 9, "img": "yogurt-plain", "ingr": "لبن كامل الدسم، مزارع زبادي حية." },
+          { "ar": "زبادي بالفراولة", "en": "Strawberry yogurt", "size": "170 جم", "price": 12, "img": "yogurt-strawberry" },
+          { "ar": "زبادي يوناني", "en": "Greek yogurt", "size": "450 جم", "price": 55, "old": 65, "img": "yogurt-greek", "desc": "زبادي يوناني مصفّى، قوامه تقيل وطعمه خفيف.", "ingr": "لبن بقري كامل الدسم، مزارع زبادي حية." },
+          { "ar": "جبنة بيضا اسطنبولي", "en": "Istanbuli white cheese", "size": "500 جم", "price": 75, "old": 90, "img": "white-cheese" },
+          { "ar": "جبنة رومي قديمة", "en": "Aged romy cheese", "size": "250 جم", "price": 90, "img": "romy", "available": false, "desc": "جبنة رومي معتّقة، طعمها حاد وملحها مظبوط." },
+          { "ar": "جبنة شيدر", "en": "Cheddar", "size": "200 جم", "price": 70, "img": "cheddar" },
+          { "ar": "لبنة", "en": "Labneh", "size": "300 جم", "price": 45, "img": "labneh" },
+          { "ar": "جبنة قريش", "en": "Areesh cheese", "size": "500 جم", "price": 35, "img": "cheese" }
+        ]},
+        { "nameAr": "بيض وزبدة", "nameEn": "Eggs & butter", "products": [
+          { "ar": "بيض أحمر", "en": "Brown eggs", "size": "30 بيضة", "price": 185, "old": 210, "img": "eggs-red" },
+          { "ar": "بيض أبيض", "en": "White eggs", "size": "12 بيضة", "price": 78, "img": "eggs-white" },
+          { "ar": "بيض بلدي", "en": "Baladi eggs", "size": "10 بيضات", "price": 75, "img": "eggs" },
+          { "ar": "زبدة بلدي", "en": "Baladi butter", "size": "200 جم", "price": 92, "img": "butter" },
+          { "ar": "قشطة", "en": "Cream", "size": "200 جم", "price": 40, "img": "cream" },
+          { "ar": "سمنة بلدي", "en": "Ghee", "size": "800 جم", "price": 320, "img": "butter" },
+          { "ar": "كريمة طبخ", "en": "Cooking cream", "size": "200 مل", "price": 38, "img": "cream" }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "لحوم وفراخ", "nameEn": "Meat & poultry", "tile": "pastel-blush", "image": "chicken",
+      "subcategories": [
+        { "nameAr": "فراخ", "nameEn": "Chicken", "products": [
+          { "ar": "فرخة كاملة", "en": "Whole chicken", "size": "1.2 كيلو", "price": 155, "img": "chicken", "desc": "فرخة بيضا طازة متنضفة." },
+          { "ar": "صدور فراخ", "en": "Chicken breasts", "size": "1 كيلو", "price": 225, "old": 265, "img": "chicken" },
+          { "ar": "أوراك فراخ", "en": "Chicken thighs", "size": "1 كيلو", "price": 150, "img": "chicken" },
+          { "ar": "أجنحة فراخ", "en": "Chicken wings", "size": "1 كيلو", "price": 110, "img": "chicken" },
+          { "ar": "فيليه فراخ", "en": "Chicken fillet", "size": "500 جم", "price": 130, "img": "chicken" },
+          { "ar": "كبدة فراخ", "en": "Chicken liver", "size": "500 جم", "price": 65, "img": "chicken" },
+          { "ar": "فراخ بانيه متتبلة", "en": "Marinated pané", "size": "500 جم", "price": 140, "img": "chicken" }
+        ]},
+        { "nameAr": "لحمة", "nameEn": "Beef", "products": [
+          { "ar": "لحمة بقري مكعبات", "en": "Beef cubes", "size": "1 كيلو", "price": 480, "img": "chicken" },
+          { "ar": "لحمة مفرومة", "en": "Minced beef", "size": "1 كيلو", "price": 460, "old": 500, "img": "chicken" },
+          { "ar": "كفتة", "en": "Kofta", "size": "500 جم", "price": 240, "img": "chicken" },
+          { "ar": "سجق بلدي", "en": "Baladi sausage", "size": "500 جم", "price": 200, "img": "chicken" },
+          { "ar": "كبدة بقري", "en": "Beef liver", "size": "500 جم", "price": 230, "img": "chicken" },
+          { "ar": "بفتيك", "en": "Beef escalope", "size": "500 جم", "price": 260, "img": "chicken" },
+          { "ar": "لحمة ضاني", "en": "Lamb", "size": "1 كيلو", "price": 520, "img": "chicken" }
+        ]},
+        { "nameAr": "مجمدات", "nameEn": "Frozen", "products": [
+          { "ar": "برجر لحمة", "en": "Beef burgers", "size": "8 قطع", "price": 160, "img": null },
+          { "ar": "ناجتس فراخ", "en": "Chicken nuggets", "size": "400 جم", "price": 95, "img": null },
+          { "ar": "كفتة مجمدة", "en": "Frozen kofta", "size": "400 جم", "price": 110, "img": null },
+          { "ar": "سمك بلطي", "en": "Tilapia", "size": "1 كيلو", "price": 120, "img": null },
+          { "ar": "جمبري", "en": "Shrimp", "size": "500 جم", "price": 280, "img": null },
+          { "ar": "خضار مشكل مجمد", "en": "Mixed vegetables", "size": "400 جم", "price": 40, "img": "produce" },
+          { "ar": "بسلة مجمدة", "en": "Frozen peas", "size": "400 جم", "price": 38, "img": "produce" }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "سناكس", "nameEn": "Snacks", "tile": "pastel-butter", "image": "chips",
+      "subcategories": [
+        { "nameAr": "شيبسي ومقرمشات", "nameEn": "Chips & crisps", "products": [
+          { "ar": "شيبس ملح وخل", "en": "Salt & vinegar chips", "size": "75 جم", "price": 12, "old": 15, "img": "chips" },
+          { "ar": "شيبس طماطم", "en": "Tomato chips", "size": "75 جم", "price": 12, "img": "chips" },
+          { "ar": "شيبس جبنة", "en": "Cheese chips", "size": "75 جم", "price": 12, "img": "chips" },
+          { "ar": "شيبس عائلي", "en": "Family-size chips", "size": "150 جم", "price": 25, "img": "chips" },
+          { "ar": "فشار بالزبدة", "en": "Butter popcorn", "size": "100 جم", "price": 18, "img": "chips" },
+          { "ar": "مقرمشات ذرة", "en": "Corn snacks", "size": "60 جم", "price": 8, "img": "chips" },
+          { "ar": "عيش محمص", "en": "Toasted bread bites", "size": "100 جم", "price": 15, "img": "bread" }
+        ]},
+        { "nameAr": "شوكولاتة وحلويات", "nameEn": "Chocolate & sweets", "products": [
+          { "ar": "شوكولاتة باللبن", "en": "Milk chocolate", "size": "100 جم", "price": 45, "img": null },
+          { "ar": "شوكولاتة داكنة", "en": "Dark chocolate", "size": "100 جم", "price": 55, "img": null },
+          { "ar": "ويفر بالشوكولاتة", "en": "Chocolate wafer", "size": "40 جم", "price": 10, "img": null },
+          { "ar": "بسكويت بالشوكولاتة", "en": "Chocolate biscuits", "size": "6 قطع", "price": 18, "img": "bread" },
+          { "ar": "كاندي فواكه", "en": "Fruit candy", "size": "100 جم", "price": 20, "img": null },
+          { "ar": "جيلي", "en": "Jelly", "size": "80 جم", "price": 12, "img": null },
+          { "ar": "لبان", "en": "Chewing gum", "size": "10 قطع", "price": 10, "img": null }
+        ]},
+        { "nameAr": "مكسرات", "nameEn": "Nuts", "products": [
+          { "ar": "لب سوري", "en": "Sunflower seeds", "size": "250 جم", "price": 40, "img": null },
+          { "ar": "سوداني محمص", "en": "Roasted peanuts", "size": "250 جم", "price": 35, "img": null },
+          { "ar": "لوز", "en": "Almonds", "size": "250 جم", "price": 150, "img": null },
+          { "ar": "كاجو", "en": "Cashews", "size": "250 جم", "price": 190, "old": 220, "img": null },
+          { "ar": "فستق", "en": "Pistachios", "size": "250 جم", "price": 210, "img": null },
+          { "ar": "مكسرات مشكلة", "en": "Mixed nuts", "size": "250 جم", "price": 170, "img": null },
+          { "ar": "حمص الشام", "en": "Roasted chickpeas", "size": "250 جم", "price": 30, "img": null }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "مشروبات", "nameEn": "Beverages", "tile": "pastel-lilac", "image": "juice",
+      "subcategories": [
+        { "nameAr": "عصاير", "nameEn": "Juices", "products": [
+          { "ar": "عصير برتقال", "en": "Orange juice", "size": "1 لتر", "price": 45, "img": "juice", "desc": "عصير برتقال طبيعي من غير سكر مضاف." },
+          { "ar": "عصير مانجا", "en": "Mango juice", "size": "1 لتر", "price": 42, "old": 50, "img": "juice" },
+          { "ar": "عصير جوافة", "en": "Guava juice", "size": "1 لتر", "price": 40, "img": "juice" },
+          { "ar": "عصير تفاح", "en": "Apple juice", "size": "1 لتر", "price": 44, "img": "juice" },
+          { "ar": "عصير قصب", "en": "Sugarcane juice", "size": "500 مل", "price": 20, "img": "juice" },
+          { "ar": "عصير ليمون بالنعناع", "en": "Lemon mint juice", "size": "500 مل", "price": 25, "img": "juice" },
+          { "ar": "عصير فراولة", "en": "Strawberry juice", "size": "1 لتر", "price": 46, "img": "juice" }
+        ]},
+        { "nameAr": "مياه ومياه غازية", "nameEn": "Water & soft drinks", "products": [
+          { "ar": "مياه معدنية", "en": "Mineral water", "size": "1.5 لتر", "price": 8, "img": null },
+          { "ar": "مياه معدنية كرتونة", "en": "Mineral water pack", "size": "6 × 1.5 لتر", "price": 45, "img": null },
+          { "ar": "مياه غازية كولا", "en": "Cola", "size": "1 لتر", "price": 20, "img": null },
+          { "ar": "مياه غازية ليمون", "en": "Lemon soda", "size": "1 لتر", "price": 20, "img": null },
+          { "ar": "صودا", "en": "Soda water", "size": "330 مل", "price": 12, "img": null },
+          { "ar": "مشروب طاقة", "en": "Energy drink", "size": "250 مل", "price": 35, "img": null },
+          { "ar": "شاي مثلج بالخوخ", "en": "Peach iced tea", "size": "500 مل", "price": 22, "img": "juice" }
+        ]},
+        { "nameAr": "شاي وقهوة", "nameEn": "Tea & coffee", "products": [
+          { "ar": "شاي ناعم", "en": "Fine black tea", "size": "250 جم", "price": 65, "img": null },
+          { "ar": "شاي فتلة", "en": "Tea bags", "size": "100 كيس", "price": 85, "old": 95, "img": null },
+          { "ar": "قهوة تركي محوج", "en": "Turkish coffee", "size": "200 جم", "price": 140, "img": null },
+          { "ar": "نسكافيه", "en": "Instant coffee", "size": "100 جم", "price": 130, "img": null },
+          { "ar": "كاكاو", "en": "Cocoa powder", "size": "125 جم", "price": 60, "img": null },
+          { "ar": "ينسون", "en": "Aniseed", "size": "20 كيس", "price": 30, "img": null },
+          { "ar": "كركديه", "en": "Hibiscus", "size": "250 جم", "price": 45, "img": null }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "منظفات", "nameEn": "Cleaning", "tile": "pastel-aqua", "image": "spray",
+      "subcategories": [
+        { "nameAr": "غسيل", "nameEn": "Laundry", "products": [
+          { "ar": "مسحوق غسيل أوتوماتيك", "en": "Automatic detergent", "size": "3 كيلو", "price": 210, "old": 240, "img": "spray" },
+          { "ar": "مسحوق غسيل يدوي", "en": "Hand-wash detergent", "size": "1 كيلو", "price": 65, "img": "spray" },
+          { "ar": "منعم ملابس", "en": "Fabric softener", "size": "1 لتر", "price": 55, "img": "spray" },
+          { "ar": "جل غسيل", "en": "Laundry gel", "size": "2.5 لتر", "price": 180, "img": "spray" },
+          { "ar": "مزيل بقع", "en": "Stain remover", "size": "500 مل", "price": 60, "img": "spray" },
+          { "ar": "كلور", "en": "Bleach", "size": "1 لتر", "price": 25, "img": "spray" },
+          { "ar": "صابون غسيل", "en": "Laundry soap bar", "size": "4 قطع", "price": 40, "img": null }
+        ]},
+        { "nameAr": "مطبخ وأطباق", "nameEn": "Kitchen & dishes", "products": [
+          { "ar": "سائل غسيل أطباق", "en": "Dish soap", "size": "1 لتر", "price": 45, "img": "spray" },
+          { "ar": "سلك مواعين", "en": "Steel wool", "size": "3 قطع", "price": 15, "img": null },
+          { "ar": "إسفنج مطبخ", "en": "Kitchen sponges", "size": "5 قطع", "price": 25, "img": null },
+          { "ar": "منظف مطبخ متعدد", "en": "Kitchen cleaner", "size": "750 مل", "price": 55, "img": "spray" },
+          { "ar": "ورق ألومنيوم", "en": "Aluminium foil", "size": "10 متر", "price": 40, "img": null },
+          { "ar": "أكياس زبالة", "en": "Garbage bags", "size": "30 كيس", "price": 35, "img": null },
+          { "ar": "مناديل مطبخ", "en": "Kitchen towels", "size": "2 لفة", "price": 45, "img": null }
+        ]},
+        { "nameAr": "البيت", "nameEn": "Household", "products": [
+          { "ar": "منظف أرضيات", "en": "Floor cleaner", "size": "2 لتر", "price": 70, "img": "spray" },
+          { "ar": "منظف زجاج", "en": "Glass cleaner", "size": "500 مل", "price": 40, "img": "spray" },
+          { "ar": "منظف حمامات", "en": "Bathroom cleaner", "size": "750 مل", "price": 60, "img": "spray" },
+          { "ar": "معطر جو", "en": "Air freshener", "size": "300 مل", "price": 65, "img": "spray" },
+          { "ar": "مبيد حشرات", "en": "Insect spray", "size": "400 مل", "price": 90, "img": "spray" },
+          { "ar": "مناديل تواليت", "en": "Toilet paper", "size": "6 لفات", "price": 70, "old": 80, "img": null },
+          { "ar": "مناديل وش", "en": "Facial tissues", "size": "550 منديل", "price": 30, "img": null }
+        ]}
+      ]
+    },
+    {
+      "nameAr": "عناية شخصية", "nameEn": "Personal care", "tile": "pastel-rose", "image": "pump",
+      "subcategories": [
+        { "nameAr": "شعر وجسم", "nameEn": "Hair & body", "products": [
+          { "ar": "شامبو", "en": "Shampoo", "size": "400 مل", "price": 95, "old": 110, "img": "pump" },
+          { "ar": "بلسم", "en": "Conditioner", "size": "400 مل", "price": 95, "img": "pump" },
+          { "ar": "شاور جل", "en": "Shower gel", "size": "500 مل", "price": 85, "img": "pump" },
+          { "ar": "صابون سايل لليدين", "en": "Liquid hand soap", "size": "500 مل", "price": 50, "img": "pump" },
+          { "ar": "صابونة", "en": "Soap bar", "size": "4 قطع", "price": 60, "img": null },
+          { "ar": "كريم مرطب", "en": "Moisturizing cream", "size": "200 مل", "price": 110, "img": "pump" },
+          { "ar": "زيت شعر", "en": "Hair oil", "size": "200 مل", "price": 75, "img": "pump" }
+        ]},
+        { "nameAr": "فم وأسنان", "nameEn": "Oral care", "products": [
+          { "ar": "معجون أسنان", "en": "Toothpaste", "size": "100 مل", "price": 45, "img": null },
+          { "ar": "فرشة أسنان", "en": "Toothbrush", "size": "1 قطعة", "price": 35, "img": null },
+          { "ar": "غسول فم", "en": "Mouthwash", "size": "500 مل", "price": 90, "img": "pump" },
+          { "ar": "خيط أسنان", "en": "Dental floss", "size": "50 متر", "price": 55, "img": null },
+          { "ar": "معجون أسنان أطفال", "en": "Kids' toothpaste", "size": "50 مل", "price": 40, "img": null },
+          { "ar": "فرشة أسنان أطفال", "en": "Kids' toothbrush", "size": "1 قطعة", "price": 30, "img": null }
+        ]},
+        { "nameAr": "أطفال ورعاية", "nameEn": "Baby & care", "products": [
+          { "ar": "حفاضات أطفال مقاس 4", "en": "Diapers size 4", "size": "44 حفاضة", "price": 320, "old": 360, "img": null },
+          { "ar": "مناديل مبللة", "en": "Wet wipes", "size": "64 منديل", "price": 45, "img": null },
+          { "ar": "شامبو أطفال", "en": "Baby shampoo", "size": "300 مل", "price": 85, "img": "pump" },
+          { "ar": "كريم أطفال", "en": "Baby cream", "size": "100 مل", "price": 70, "img": "pump" },
+          { "ar": "مزيل عرق", "en": "Deodorant", "size": "150 مل", "price": 95, "img": null },
+          { "ar": "شفرات حلاقة", "en": "Razors", "size": "3 قطع", "price": 60, "img": null },
+          { "ar": "قطن طبي", "en": "Cotton", "size": "100 جم", "price": 25, "img": null }
+        ]}
+      ]
+    }
+  ]
+}

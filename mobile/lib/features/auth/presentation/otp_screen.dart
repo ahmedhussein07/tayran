@@ -2,16 +2,15 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/format/digits.dart';
+import 'package:tayran_ui/tayran_ui.dart';
+
 import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/session/session_controller.dart';
-import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/flow_header.dart';
 import '../../../core/widgets/flow_scaffold.dart';
 import '../../../core/widgets/otp_field.dart';
 import '../../../core/widgets/resend_timer.dart';
-import '../../../core/widgets/tayran_button.dart';
 import '../application/otp_flow.dart';
 import '../data/auth_repository.dart';
 
@@ -54,7 +53,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       _message = null;
     });
     try {
-      final session = await ref.read(authRepositoryProvider).verifyOtp(flow.challengeId, _code.text);
+      final session = await ref
+          .read(authRepositoryProvider)
+          .verifyOtp(flow.challengeId, _code.text);
       // The router follows the new session to NAME, ADDRESS or HOME.
       await ref.read(sessionControllerProvider.notifier).signIn(session);
     } on ApiException catch (e) {
@@ -72,8 +73,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     if (flow == null || _resending) return;
     setState(() => _resending = true);
     try {
-      final challenge = await ref.read(authRepositoryProvider).requestOtp(EgyptPhone.e164(flow.phoneDigits));
-      ref.read(otpFlowProvider.notifier).start(
+      final challenge = await ref
+          .read(authRepositoryProvider)
+          .requestOtp(EgyptPhone.e164(flow.phoneDigits));
+      ref
+          .read(otpFlowProvider.notifier)
+          .start(
             phoneDigits: flow.phoneDigits,
             challengeId: challenge.challengeId,
             resendAfterSeconds: challenge.resendAfterSeconds,
@@ -86,7 +91,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     } on ApiException catch (e) {
       if (!mounted) return;
       final retryAfter = (e.details['retryAfterSeconds'] as num?)?.toInt();
-      if (retryAfter != null) ref.read(otpFlowProvider.notifier).wait(retryAfter);
+      if (retryAfter != null)
+        ref.read(otpFlowProvider.notifier).wait(retryAfter);
       setState(() => _message = context.s.error(e.code));
     } finally {
       if (mounted) setState(() => _resending = false);
@@ -100,10 +106,15 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final flow = ref.watch(otpFlowProvider);
     if (flow == null) {
       // Nothing to verify (e.g. the app was restored here): start over.
-      WidgetsBinding.instance.addPostFrameCallback((_) => mounted ? context.go('/phone') : null);
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => mounted ? context.go('/phone') : null,
+      );
       return const SizedBox.shrink();
     }
-    final phone = Digits.localize(EgyptPhone.local(flow.phoneDigits), arabic: s.isArabic);
+    final phone = Digits.localize(
+      EgyptPhone.local(flow.phoneDigits),
+      arabic: s.isArabic,
+    );
 
     return FlowScaffold(
       header: FlowHeader(onBack: _backToPhone),
@@ -116,18 +127,27 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             subtitle: Column(
               children: [
                 Text.rich(
-                  TextSpan(children: [
-                    TextSpan(text: s.otpSentTo),
-                    // Phone numbers always run left to right.
-                    TextSpan(
-                      text: '\u2066$phone\u2069',
-                      style: TayranTypography.body.copyWith(color: c.ink, fontWeight: FontWeight.w700),
-                    ),
-                  ]),
+                  TextSpan(
+                    children: [
+                      TextSpan(text: s.otpSentTo),
+                      // Phone numbers always run left to right.
+                      TextSpan(
+                        text: '\u2066$phone\u2069',
+                        style: TayranTypography.body.copyWith(
+                          color: c.ink,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: TayranSpace.s1),
-                TayranTextLink(s.editNumber, onTap: _backToPhone, style: TayranTypography.body),
+                TayranTextLink(
+                  s.editNumber,
+                  onTap: _backToPhone,
+                  style: TayranTypography.body,
+                ),
               ],
             ),
           ),

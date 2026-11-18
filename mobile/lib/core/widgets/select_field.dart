@@ -1,8 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../theme/tokens.dart';
-import 'tayran_icon.dart';
-import 'tayran_text_field.dart';
+import 'package:tayran_ui/tayran_ui.dart';
 
 /// A field that opens a picker instead of a keyboard: the chosen value or a placeholder, with a chevron.
 class SelectField extends StatelessWidget {
@@ -50,7 +48,12 @@ class SelectField extends StatelessWidget {
             child: Row(
               children: [
                 if (icon != null) ...[
-                  TayranIcon(icon!, size: 20, strokeWidth: 2.25, color: disabled ? c.inkMuted : c.ink),
+                  TayranIcon(
+                    icon!,
+                    size: 20,
+                    strokeWidth: 2.25,
+                    color: disabled ? c.inkMuted : c.ink,
+                  ),
                   const SizedBox(width: TayranSpace.s2),
                 ],
                 Expanded(
@@ -62,7 +65,12 @@ class SelectField extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: TayranSpace.s2),
-                TayranIcon('chevron-down', size: 20, strokeWidth: 2.25, color: c.inkMuted),
+                TayranIcon(
+                  'chevron-down',
+                  size: 20,
+                  strokeWidth: 2.25,
+                  color: c.inkMuted,
+                ),
               ],
             ),
           ),
