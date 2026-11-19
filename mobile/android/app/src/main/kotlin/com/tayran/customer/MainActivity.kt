@@ -1,4 +1,4 @@
-package com.tayran.tayran
+package com.tayran.customer
 
 import io.flutter.embedding.android.FlutterActivity
 
