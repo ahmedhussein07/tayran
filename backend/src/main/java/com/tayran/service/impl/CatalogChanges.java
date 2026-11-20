@@ -7,6 +7,7 @@ import com.tayran.exception.BusinessException;
 import com.tayran.model.ImageKind;
 import com.tayran.model.TayranConst;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -22,10 +23,15 @@ public class CatalogChanges {
     private final StoreRepository storeRepository;
     private final ImageRecordRepository imageRepository;
     private final Clock clock;
+    private final ApplicationEventPublisher events;
 
-    /** Any create, update, delete or image change: the publisher republishes on its next run. */
+    /**
+     * Any create, update, delete or image change: the publisher republishes on its next run, and
+     * the live catalog is cleared once the edit commits.
+     */
     public void markDirty() {
         storeRepository.markAllDirty();
+        events.publishEvent(new LiveCatalog.CatalogEdited());
     }
 
     /**

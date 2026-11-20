@@ -75,7 +75,7 @@ public class CatalogPublisher {
      * One query loads the whole store catalog: active categories, their active subcategories, and
      * their active, not-deleted products that have a price in this store, in admin order.
      */
-    private static final String CATALOG_QUERY = """
+    private static final String CATALOG_SELECT = """
             SELECT c.id c_id, c.name_ar c_ar, c.name_en c_en, c.tile_color, c.image_hash c_img, c.image_bg c_bg,
                    s.id s_id, s.name_ar s_ar, s.name_en s_en,
                    p.id p_id, p.name_ar p_ar, p.name_en p_en, p.size_label, p.description, p.ingredients,
@@ -84,9 +84,11 @@ public class CatalogPublisher {
             LEFT JOIN subcategories s ON s.category_id = c.id AND s.active
             LEFT JOIN (products p JOIN store_products sp ON sp.product_id = p.id AND sp.store_id = ?)
                    ON p.subcategory_id = s.id AND p.active AND p.deleted_at IS NULL
-            WHERE c.active
-            ORDER BY c.sort_order, c.id, s.sort_order, s.id, p.sort_order, p.id
             """;
+    private static final String CATALOG_ORDER = " ORDER BY c.sort_order, c.id, s.sort_order, s.id, p.sort_order, p.id";
+    private static final String CATALOG_QUERY = CATALOG_SELECT + " WHERE c.active" + CATALOG_ORDER;
+    /** The same rows for one category (the live catalog loads a category at a time). */
+    private static final String CATEGORY_QUERY = CATALOG_SELECT + " WHERE c.active AND c.id = ?" + CATALOG_ORDER;
 
     private final StoreRepository storeRepository;
     private final CatalogPublicationRepository publicationRepository;
@@ -196,10 +198,19 @@ public class CatalogPublisher {
     }
 
     CatalogJson load(long storeId, int version) {
+        return query(storeId, version, CATALOG_QUERY, storeId);
+    }
+
+    /** One active category of a store with its subcategories and products; no categories when it isn't active. */
+    CatalogJson loadCategory(long storeId, long categoryId) {
+        return query(storeId, 0, CATEGORY_QUERY, storeId, categoryId);
+    }
+
+    private CatalogJson query(long storeId, int version, String sql, Object... args) {
         Map<Long, CategoryJson> categories = new LinkedHashMap<>();
         Map<Long, SubcategoryJson> subcategories = new LinkedHashMap<>();
         List<ProductJson> products = new ArrayList<>();
-        jdbc.query(CATALOG_QUERY, (org.springframework.jdbc.core.RowCallbackHandler) rs -> {
+        jdbc.query(sql, (org.springframework.jdbc.core.RowCallbackHandler) rs -> {
             long categoryId = rs.getLong("c_id");
             categories.computeIfAbsent(categoryId, id -> category(rs, id));
             long subId = rs.getLong("s_id");
@@ -213,7 +224,7 @@ public class CatalogPublisher {
                             rs.getString("description"), rs.getString("ingredients")));
                 }
             }
-        }, storeId);
+        }, args);
         return new CatalogJson(version, storeId, List.copyOf(categories.values()), List.copyOf(subcategories.values()), products);
     }
 

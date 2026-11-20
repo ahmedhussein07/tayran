@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/cart/presentation/widgets/delivery.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 import '../cart/cart_controller.dart';
+import '../catalog/live_catalog.dart';
 import '../orders/active_orders.dart';
 import '../orders/orders_repository.dart';
 import '../push/push_service.dart';
@@ -16,6 +17,7 @@ Future<void> signOut(WidgetRef ref) async {
   await ref.read(substitutionPrefsProvider.notifier).wipe();
   await OrdersRepository.clearCache();
   ref.read(activeOrdersProvider.notifier).clear();
+  ref.read(liveCatalogProvider.notifier).clear();
   ref.invalidate(orderHistoryProvider);
   ref.invalidate(deliveryAddressProvider);
   await ref.read(sessionControllerProvider.notifier).signOut();

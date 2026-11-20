@@ -6,6 +6,7 @@ import 'package:tayran_ui/tayran_ui.dart';
 import '../../../core/cart/cart_controller.dart';
 import '../../../core/catalog/catalog.dart';
 import '../../../core/catalog/catalog_providers.dart';
+import '../../../core/catalog/live_catalog.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/orders/order_models.dart';
 import '../../../core/orders/pricing.dart';
@@ -34,25 +35,43 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     final qty = line.qty;
     final id = line.product.id;
     _cart.remove(id);
-    showToast(context, s.itemRemoved(line.product.name(s.isArabic)),
-        actionLabel: s.undo, onAction: () => _cart.restore(id, qty), bottom: 88);
+    showToast(
+      context,
+      s.itemRemoved(line.product.name(s.isArabic)),
+      actionLabel: s.undo,
+      onAction: () => _cart.restore(id, qty),
+      bottom: 88,
+    );
   }
 
   Future<void> _clearAll(Map<int, int> cart) async {
     final s = context.s;
-    if (!await confirm(context, title: s.clearCartConfirm, confirmLabel: s.clearCart, destructive: true)) return;
+    if (!await confirm(
+      context,
+      title: s.clearCartConfirm,
+      confirmLabel: s.clearCart,
+      destructive: true,
+    ))
+      return;
     final before = Map.of(cart);
     _cart.clear();
     if (!mounted) return;
-    showToast(context, s.cartCleared, actionLabel: s.undo, onAction: () {
-      before.forEach(_cart.restore);
-    });
+    showToast(
+      context,
+      s.cartCleared,
+      actionLabel: s.undo,
+      onAction: () {
+        before.forEach(_cart.restore);
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = context.s;
+    // Opening the cart asks the backend for its items' current prices (from its memory).
+    ref.watch(cartCheckProvider);
     final cart = ref.watch(cartProvider);
     final catalog = ref.watch(catalogProvider).value;
     final templates = ref.watch(imageTemplatesProvider);
@@ -65,7 +84,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     // Products that left the catalog altogether can't be ordered or shown: drop them quietly.
     if (catalog != null && priced.missing.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _cart.removeAll(priced.missing));
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _cart.removeAll(priced.missing),
+      );
     }
 
     final totals = Totals.of(priced.subtotal, settings, online: false);
@@ -80,16 +101,26 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             child: ScreenHeader(
               title: s.cartTitle,
               count: priced.count,
-              onBack: () => context.canPop() ? context.pop() : context.go(Routes.home),
+              onBack: () =>
+                  context.canPop() ? context.pop() : context.go(Routes.home),
               textAction: priced.isEmpty ? null : s.clearCart,
               onTextAction: () => _clearAll(cart),
             ),
           ),
           Expanded(
             child: priced.isEmpty
-                ? _EmptyCart(onShop: () => context.canPop() ? context.pop() : context.go(Routes.home))
+                ? _EmptyCart(
+                    onShop: () => context.canPop()
+                        ? context.pop()
+                        : context.go(Routes.home),
+                  )
                 : ListView(
-                    padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s4, TayranSpace.s4, TayranSpace.s6),
+                    padding: const EdgeInsets.fromLTRB(
+                      TayranSpace.s4,
+                      TayranSpace.s4,
+                      TayranSpace.s4,
+                      TayranSpace.s6,
+                    ),
                     children: [
                       DeliveryCard(
                         address: address,
@@ -97,7 +128,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         onChange: () => pickDeliveryAddress(context, ref),
                       ),
                       const SizedBox(height: TayranSpace.s3),
-                      DeliveryProgress(subtotal: priced.subtotal, threshold: settings.freeDeliveryThreshold),
+                      DeliveryProgress(
+                        subtotal: priced.subtotal,
+                        threshold: settings.freeDeliveryThreshold,
+                      ),
                       SectionTitle(s.yourOrder),
                       Container(
                         clipBehavior: Clip.antiAlias,
@@ -116,15 +150,25 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                                 templates: templates,
                                 soldOut: line.product.soldOut,
                                 last: i == all.length - 1,
-                                onQtyChanged: (q) => _cart.set(line.product.id, q),
+                                onQtyChanged: (q) =>
+                                    _cart.set(line.product.id, q),
                                 onRemove: () => _remove(line),
-                                substitution: subs[line.product.id] ?? SubstitutionPref.replace,
-                                onSubstitution: (p) => ref.read(substitutionPrefsProvider.notifier).set(line.product.id, p),
+                                substitution:
+                                    subs[line.product.id] ??
+                                    SubstitutionPref.replace,
+                                onSubstitution: (p) => ref
+                                    .read(substitutionPrefsProvider.notifier)
+                                    .set(line.product.id, p),
                               ),
                           ],
                         ),
                       ),
-                      if (catalog != null) _ForgotSomething(catalog: catalog, cart: cart, templates: templates),
+                      if (catalog != null)
+                        _ForgotSomething(
+                          catalog: catalog,
+                          cart: cart,
+                          templates: templates,
+                        ),
                       const SizedBox(height: TayranSpace.s6),
                       const _PromoSoon(),
                       const SizedBox(height: TayranSpace.s4),
@@ -144,8 +188,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             CheckoutBar(
               label: s.continueOrder,
               total: totals.total,
-              note: belowMin ? s.minOrderNote(s.price(toEgp(settings.minOrderAmount))) : null,
-              onPressed: belowMin || priced.lines.isEmpty || address == null ? null : () => context.push(Routes.checkout),
+              note: belowMin
+                  ? s.minOrderNote(s.price(toEgp(settings.minOrderAmount)))
+                  : null,
+              onPressed: belowMin || priced.lines.isEmpty || address == null
+                  ? null
+                  : () => context.push(Routes.checkout),
             ),
         ],
       ),
@@ -171,18 +219,37 @@ class _EmptyCart extends StatelessWidget {
             Container(
               width: 140,
               height: 140,
-              decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                BoxShadow(color: c.tint, spreadRadius: 8),
-                ...context.shadows.card,
-              ]),
-              child: const ClipOval(child: FittedBox(fit: BoxFit.cover, child: TayranMark(size: 140))),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(color: c.tint, spreadRadius: 8),
+                  ...context.shadows.card,
+                ],
+              ),
+              child: const ClipOval(
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: TayranMark(size: 140),
+                ),
+              ),
             ),
             const SizedBox(height: TayranSpace.s6),
-            Text(s.emptyCartTitle, style: TayranTypography.titleLg.copyWith(color: c.ink)),
+            Text(
+              s.emptyCartTitle,
+              style: TayranTypography.titleLg.copyWith(color: c.ink),
+            ),
             const SizedBox(height: TayranSpace.s2),
-            Text(s.emptyCartBody, textAlign: TextAlign.center, style: TayranTypography.body.copyWith(color: c.inkMuted)),
+            Text(
+              s.emptyCartBody,
+              textAlign: TextAlign.center,
+              style: TayranTypography.body.copyWith(color: c.inkMuted),
+            ),
             const SizedBox(height: TayranSpace.s6),
-            TayranButton(label: s.startShopping, size: TayranButtonSize.lg, onPressed: onShop),
+            TayranButton(
+              label: s.startShopping,
+              size: TayranButtonSize.lg,
+              onPressed: onShop,
+            ),
           ],
         ),
       ),
@@ -192,7 +259,11 @@ class _EmptyCart extends StatelessWidget {
 
 /// "نسيت حاجة؟": other products from the same shelves, offers first.
 class _ForgotSomething extends ConsumerWidget {
-  const _ForgotSomething({required this.catalog, required this.cart, required this.templates});
+  const _ForgotSomething({
+    required this.catalog,
+    required this.cart,
+    required this.templates,
+  });
 
   final Catalog catalog;
   final Map<int, int> cart;
@@ -201,7 +272,9 @@ class _ForgotSomething extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = context.s;
-    final shelves = {for (final id in cart.keys) ?catalog.product(id)?.subcategoryId};
+    final shelves = {
+      for (final id in cart.keys) ?catalog.product(id)?.subcategoryId,
+    };
     final picks = [
       for (final sub in shelves)
         for (final p in catalog.productsOfSubcategory(sub))
@@ -209,7 +282,16 @@ class _ForgotSomething extends ConsumerWidget {
     ]..sort((a, b) => (b.onSale ? 1 : 0) - (a.onSale ? 1 : 0));
     if (picks.isEmpty) return const SizedBox.shrink();
     const cardW = TayranSize.cardWSm;
-    const cardH = 6 + (cardW - 12) * .96 + 6 + 38 + 18 + TayranSpace.s1 + 24 + TayranSpace.s2 + 2;
+    const cardH =
+        6 +
+        (cardW - 12) * .96 +
+        6 +
+        38 +
+        18 +
+        TayranSpace.s1 +
+        24 +
+        TayranSpace.s2 +
+        2;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -229,7 +311,8 @@ class _ForgotSomething extends ConsumerWidget {
                 templates: templates,
                 width: cardW,
                 qty: cart[p.id] ?? 0,
-                onQtyChanged: (q) => ref.read(cartProvider.notifier).set(p.id, q),
+                onQtyChanged: (q) =>
+                    ref.read(cartProvider.notifier).set(p.id, q),
                 onOpen: () => showProductSheet(context, productId: p.id),
               );
             },
@@ -256,16 +339,29 @@ class _PromoSoon extends StatelessWidget {
         borderRadius: BorderRadius.circular(TayranRadius.md),
         border: Border.all(color: c.line),
       ),
-      child: Row(children: [
-        TayranIcon('tag', size: 20, color: c.inkMuted),
-        const SizedBox(width: TayranSpace.s2),
-        Expanded(child: Text(s.promoCode, style: TayranTypography.body.copyWith(color: c.inkMuted))),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(color: c.navyTint, borderRadius: BorderRadius.circular(TayranRadius.full)),
-          child: Text(s.comingSoon, style: TayranTypography.micro.copyWith(color: c.ink)),
-        ),
-      ]),
+      child: Row(
+        children: [
+          TayranIcon('tag', size: 20, color: c.inkMuted),
+          const SizedBox(width: TayranSpace.s2),
+          Expanded(
+            child: Text(
+              s.promoCode,
+              style: TayranTypography.body.copyWith(color: c.inkMuted),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: c.navyTint,
+              borderRadius: BorderRadius.circular(TayranRadius.full),
+            ),
+            child: Text(
+              s.comingSoon,
+              style: TayranTypography.micro.copyWith(color: c.ink),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -38,7 +38,12 @@ class CartItem extends StatelessWidget {
     final name = p.name(s.isArabic);
     final row = Container(
       color: c.surfaceRaised,
-      padding: const EdgeInsets.fromLTRB(TayranSpace.s3, TayranSpace.s3, TayranSpace.s3, TayranSpace.s3),
+      padding: const EdgeInsets.fromLTRB(
+        TayranSpace.s3,
+        TayranSpace.s3,
+        TayranSpace.s3,
+        TayranSpace.s3,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,7 +53,10 @@ class CartItem extends StatelessWidget {
               width: 64,
               height: 64,
               padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(color: c.surfaceSunken, borderRadius: BorderRadius.circular(TayranRadius.sm)),
+              decoration: BoxDecoration(
+                color: c.surfaceSunken,
+                borderRadius: BorderRadius.circular(TayranRadius.sm),
+              ),
               child: TayranImage(
                 hash: p.img,
                 bg: p.bg,
@@ -64,23 +72,51 @@ class CartItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, style: TayranTypography.label.copyWith(color: c.ink)),
-                if (p.size.isNotEmpty) Text(p.size, style: TayranTypography.caption.copyWith(color: c.inkMuted)),
+                Text(
+                  name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TayranTypography.label.copyWith(color: c.ink),
+                ),
+                if (p.size.isNotEmpty)
+                  Text(
+                    p.size,
+                    style: TayranTypography.caption.copyWith(color: c.inkMuted),
+                  ),
                 const SizedBox(height: TayranSpace.s1),
                 if (soldOut)
-                  Text(s.unavailableInCart, style: TayranTypography.caption.copyWith(color: c.danger, fontWeight: FontWeight.w600))
+                  Text(
+                    s.unavailableInCart,
+                    style: TayranTypography.caption.copyWith(
+                      color: c.danger,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
                 else
-                  Row(children: [
-                    Text(s.price(toEgp(line.lineTotal)), style: TayranTypography.price.copyWith(color: c.ink)),
-                    if (line.lineOldTotal != null) ...[
-                      const SizedBox(width: 6),
-                      Text(s.price(toEgp(line.lineOldTotal!)),
-                          style: TayranTypography.caption.copyWith(color: c.inkMuted, decoration: TextDecoration.lineThrough)),
+                  Row(
+                    children: [
+                      Text(
+                        s.price(toEgp(line.lineTotal)),
+                        style: TayranTypography.price.copyWith(color: c.ink),
+                      ),
+                      if (line.lineOldTotal != null) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          s.price(toEgp(line.lineOldTotal!)),
+                          style: TayranTypography.caption.copyWith(
+                            color: c.inkMuted,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      ],
                     ],
-                  ]),
+                  ),
                 if (!soldOut) ...[
                   const SizedBox(height: TayranSpace.s2),
-                  SubstitutionPicker(value: substitution, onChanged: onSubstitution),
+                  SubstitutionPicker(
+                    value: substitution,
+                    onChanged: onSubstitution,
+                  ),
                 ],
               ],
             ),
@@ -95,7 +131,10 @@ class CartItem extends StatelessWidget {
                 child: Container(
                   width: 36,
                   height: 36,
-                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: c.line)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: c.line),
+                  ),
                   alignment: Alignment.center,
                   child: TayranIcon('trash', size: 18, color: c.ink),
                 ),
@@ -126,15 +165,28 @@ class CartItem extends StatelessWidget {
             color: c.danger,
             alignment: AlignmentDirectional.centerEnd,
             padding: const EdgeInsets.symmetric(horizontal: TayranSpace.s5),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              TayranIcon('trash', size: 18, color: c.onDanger),
-              const SizedBox(width: 6),
-              Text(s.removeAction, style: TayranTypography.label.copyWith(color: c.onDanger)),
-            ]),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TayranIcon('trash', size: 18, color: c.onDanger),
+                const SizedBox(width: 6),
+                Text(
+                  s.removeAction,
+                  style: TayranTypography.label.copyWith(color: c.onDanger),
+                ),
+              ],
+            ),
           ),
           child: row,
         ),
-        if (!last) Divider(height: 1, thickness: 1, color: c.line, indent: TayranSpace.s3, endIndent: TayranSpace.s3),
+        if (!last)
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: c.line,
+            indent: TayranSpace.s3,
+            endIndent: TayranSpace.s3,
+          ),
       ],
     );
   }
@@ -142,7 +194,11 @@ class CartItem extends StatelessWidget {
 
 /// "لو خلص: استبدله بمنتج شبهه ▾" – opens three choices; picking one closes it.
 class SubstitutionPicker extends StatefulWidget {
-  const SubstitutionPicker({super.key, required this.value, required this.onChanged});
+  const SubstitutionPicker({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   final SubstitutionPref value;
   final ValueChanged<SubstitutionPref> onChanged;
@@ -178,26 +234,38 @@ class _SubstitutionPickerState extends State<SubstitutionPicker> {
               child: GestureDetector(
                 onTap: () => setState(() => _open = !_open),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: c.surfaceSunken,
                     borderRadius: BorderRadius.circular(TayranRadius.full),
                     border: Border.all(color: c.line),
                   ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Flexible(
-                      child: Text(s.ifOutOfStock(current.$2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          s.ifOutOfStock(current.$2),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TayranTypography.micro.copyWith(color: c.ink)),
-                    ),
-                    const SizedBox(width: 2),
-                    AnimatedRotation(
-                      turns: _open ? .5 : 0,
-                      duration: const Duration(milliseconds: 150),
-                      child: TayranIcon('chevron-down', size: 14, color: c.ink),
-                    ),
-                  ]),
+                          style: TayranTypography.micro.copyWith(color: c.ink),
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      AnimatedRotation(
+                        turns: _open ? .5 : 0,
+                        duration: const Duration(milliseconds: 150),
+                        child: TayranIcon(
+                          'chevron-down',
+                          size: 14,
+                          color: c.ink,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -216,7 +284,10 @@ class _SubstitutionPickerState extends State<SubstitutionPicker> {
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: pref == widget.value ? c.tint : Colors.transparent,
                       borderRadius: BorderRadius.circular(TayranRadius.sm),
@@ -228,19 +299,46 @@ class _SubstitutionPickerState extends State<SubstitutionPicker> {
                           height: 18,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: pref == widget.value ? c.navy : c.lineStrong, width: 2),
+                            border: Border.all(
+                              color: pref == widget.value
+                                  ? c.navy
+                                  : c.lineStrong,
+                              width: 2,
+                            ),
                           ),
                           alignment: Alignment.center,
                           child: pref == widget.value
-                              ? Container(width: 8, height: 8, decoration: BoxDecoration(color: c.navy, shape: BoxShape.circle))
+                              ? Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: c.navy,
+                                    shape: BoxShape.circle,
+                                  ),
+                                )
                               : null,
                         ),
                         const SizedBox(width: TayranSpace.s2),
                         Expanded(
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(title, style: TayranTypography.caption.copyWith(color: c.ink, fontWeight: FontWeight.w700)),
-                            Text(hint, style: TayranTypography.micro.copyWith(color: c.inkMuted, fontWeight: FontWeight.w500)),
-                          ]),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: TayranTypography.caption.copyWith(
+                                  color: c.ink,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                hint,
+                                style: TayranTypography.micro.copyWith(
+                                  color: c.inkMuted,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

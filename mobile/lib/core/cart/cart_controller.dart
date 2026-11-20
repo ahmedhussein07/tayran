@@ -181,6 +181,13 @@ class PriceOverrides extends Notifier<Map<int, int>> {
   }
 
   void putAll(Map<int, int> prices) => state = {...state, ...prices};
+
+  /// The backend sent these products' current prices (live catalog): they replace any override.
+  void forget(Iterable<int> productIds) {
+    final ids = productIds.toSet();
+    if (!state.keys.any(ids.contains)) return;
+    state = {...state}..removeWhere((id, _) => ids.contains(id));
+  }
 }
 
 /// A cart line priced from the current catalog (or the server's newer price).

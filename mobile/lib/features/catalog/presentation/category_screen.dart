@@ -7,15 +7,18 @@ import 'package:tayran_ui/tayran_ui.dart';
 import '../../../core/cart/cart_controller.dart';
 import '../../../core/catalog/catalog.dart';
 import '../../../core/catalog/catalog_providers.dart';
+import '../../../core/catalog/live_catalog.dart';
 import '../../../core/l10n/strings.dart';
+import '../../../core/network/api_exception.dart';
 import '../../../core/router/app_router.dart';
 import '../../home/presentation/widgets/tayran_tab_bar.dart';
 import 'product_sheet.dart';
 import 'widgets/catalog_bars.dart';
 import 'widgets/product_card.dart';
 
-/// The category listing (design: CategoryScreen). Everything comes from the cached catalog: no
-/// backend call when it opens. Chips filter in place ("الكل", subcategories, "عروض"), sort is one
+/// The category listing (design: CategoryScreen). Each time it opens it asks the backend for the
+/// category as it is now (served from the backend's memory), so admin edits show right away; pull
+/// down to ask again. Offline, it shows the saved catalog file. Chips filter in place ("الكل", subcategories, "عروض"), sort is one
 /// tap, + turns into the stepper, and the cart bar follows.
 class CategoryScreen extends ConsumerStatefulWidget {
   const CategoryScreen({super.key, required this.categoryId});
@@ -114,10 +117,22 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = context.s;
+    final pageAsync = ref.watch(categoryPageProvider(widget.categoryId));
+    final live = ref.watch(liveCatalogProvider);
     final catalogAsync = ref.watch(catalogProvider);
     final templates = ref.watch(imageTemplatesProvider);
-    final catalog = catalogAsync.value;
+    // The overlay again, synchronously: the page shows the frame it arrives (idempotent).
+    final catalog = catalogAsync.value?.overlay(live);
     final category = catalog?.category(widget.categoryId);
+    final gone =
+        pageAsync.error is ApiException &&
+        (pageAsync.error! as ApiException).code == 'NOT_FOUND';
+    // First open this session: wait for the live page (fast) rather than flash old prices. Later
+    // opens show the last live page while the new one loads; a failed call (offline) shows the file.
+    final waiting =
+        !pageAsync.hasValue &&
+        !pageAsync.hasError &&
+        !live.pages.containsKey(widget.categoryId);
     final dark = Theme.of(context).brightness == Brightness.dark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -143,13 +158,20 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
             ),
             Expanded(
               child: switch (catalogAsync) {
+                _ when gone => _Message(text: s.categoryGone),
+                _ when waiting => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                ),
                 AsyncData() when category == null => _Message(
                   text: s.categoryGone,
                 ),
-                AsyncData(:final value) => _body(value, category!, templates),
+                AsyncData() => _body(catalog!, category!, templates),
                 AsyncError() when catalog == null => _Message(
                   text: s.catalogFailed,
-                  onRetry: () => ref.invalidate(catalogProvider),
+                  onRetry: () {
+                    ref.invalidate(fileCatalogProvider);
+                    ref.invalidate(categoryPageProvider(widget.categoryId));
+                  },
                 ),
                 _ when catalog != null && category != null => _body(
                   catalog,
@@ -217,63 +239,72 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
               child: ChipBar(items: chips, active: _chip, onChanged: _setChip),
             ),
             Expanded(
-              child: CustomScrollView(
-                controller: _scroll,
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
-                      TayranSpace.s4,
-                      TayranSpace.s4,
-                      TayranSpace.s4,
-                      TayranSpace.s3,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: SortControl(
-                        count: products.length,
-                        value: _sort,
-                        onChanged: (v) => setState(() => _sort = v),
-                      ),
-                    ),
-                  ),
-                  if (products.isEmpty)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: _Message(
-                        text: _chip == _offers ? s.noOffers : s.emptyCategory,
-                      ),
-                    )
-                  else
+              child: RefreshIndicator(
+                color: c.ink,
+                backgroundColor: c.surfaceRaised,
+                onRefresh: () => ref
+                    .refresh(categoryPageProvider(widget.categoryId).future)
+                    .then((_) {}, onError: (_) {}),
+                child: CustomScrollView(
+                  controller: _scroll,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
                     SliverPadding(
-                      // Scroll clearance under the last row for the floating cart bar.
-                      padding: EdgeInsets.fromLTRB(
+                      padding: const EdgeInsets.fromLTRB(
                         TayranSpace.s4,
-                        0,
                         TayranSpace.s4,
-                        summary.count > 0 ? 96 : TayranSpace.s6,
+                        TayranSpace.s4,
+                        TayranSpace.s3,
                       ),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: TayranSpace.s2,
-                          crossAxisSpacing: TayranSpace.s2,
-                          mainAxisExtent: cardH,
+                      sliver: SliverToBoxAdapter(
+                        child: SortControl(
+                          count: products.length,
+                          value: _sort,
+                          onChanged: (v) => setState(() => _sort = v),
                         ),
-                        delegate: SliverChildBuilderDelegate((context, i) {
-                          final p = products[i];
-                          return ProductCard(
-                            key: ValueKey(p.id),
-                            product: p,
-                            templates: templates,
-                            qty: cart[p.id] ?? 0,
-                            onQtyChanged: (q) =>
-                                ref.read(cartProvider.notifier).set(p.id, q),
-                            onOpen: () =>
-                                showProductSheet(context, productId: p.id),
-                          );
-                        }, childCount: products.length),
                       ),
                     ),
-                ],
+                    if (products.isEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _Message(
+                          text: _chip == _offers ? s.noOffers : s.emptyCategory,
+                        ),
+                      )
+                    else
+                      SliverPadding(
+                        // Scroll clearance under the last row for the floating cart bar.
+                        padding: EdgeInsets.fromLTRB(
+                          TayranSpace.s4,
+                          0,
+                          TayranSpace.s4,
+                          summary.count > 0 ? 96 : TayranSpace.s6,
+                        ),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                mainAxisSpacing: TayranSpace.s2,
+                                crossAxisSpacing: TayranSpace.s2,
+                                mainAxisExtent: cardH,
+                              ),
+                          delegate: SliverChildBuilderDelegate((context, i) {
+                            final p = products[i];
+                            return ProductCard(
+                              key: ValueKey(p.id),
+                              product: p,
+                              templates: templates,
+                              qty: cart[p.id] ?? 0,
+                              onQtyChanged: (q) =>
+                                  ref.read(cartProvider.notifier).set(p.id, q),
+                              onOpen: () =>
+                                  showProductSheet(context, productId: p.id),
+                            );
+                          }, childCount: products.length),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ],

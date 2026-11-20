@@ -7,6 +7,7 @@ import 'package:tayran_ui/tayran_ui.dart';
 
 import '../../../core/cart/cart_controller.dart';
 import '../../../core/catalog/catalog_providers.dart';
+import '../../../core/catalog/live_catalog.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/orders/active_orders.dart';
@@ -47,6 +48,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   void initState() {
     super.initState();
     _cash.addListener(() => setState(() {}));
+    // Check the cart's prices again on the way in (the cart may have been open a while).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.invalidate(cartCheckProvider);
+    });
   }
 
   @override
@@ -58,7 +63,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
   static String _newKey() {
     final r = Random.secure();
-    return List.generate(16, (_) => r.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+    return List.generate(
+      16,
+      (_) => r.nextInt(256).toRadixString(16).padLeft(2, '0'),
+    ).join();
   }
 
   /// The amount typed in the cash field, in piastres (Arabic-Indic digits accepted).
@@ -76,7 +84,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       online: _online,
       lines: [
         for (final l in priced.lines)
-          (l.product.id, l.qty, subs[l.product.id] ?? SubstitutionPref.replace, l.unitPrice),
+          (
+            l.product.id,
+            l.qty,
+            subs[l.product.id] ?? SubstitutionPref.replace,
+            l.unitPrice,
+          ),
       ],
       expectedTotal: totals.total,
       notes: _note.text.trim().isEmpty ? null : _note.text.trim(),
@@ -92,7 +105,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       _error = null;
     });
     try {
-      final order = await ref.read(ordersRepositoryProvider).place(input, _key!);
+      final order = await ref
+          .read(ordersRepositoryProvider)
+          .place(input, _key!);
       ref.read(activeOrdersProvider.notifier).put(order);
       ref.read(cartProvider.notifier).clear();
       if (mounted) context.go(Routes.success(order.id), extra: order);
@@ -116,9 +131,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final catalog = ref.read(catalogProvider).value;
     ref.read(priceOverridesProvider.notifier).putAll({
       for (final l in e.lines)
-        if (l.status == 'PRICE_CHANGED' && l.price != null) l.productId: l.price!,
+        if (l.status == 'PRICE_CHANGED' && l.price != null)
+          l.productId: l.price!,
     });
-    final gone = [for (final l in e.lines) if (l.status == 'UNAVAILABLE') l.productId];
+    final gone = [
+      for (final l in e.lines)
+        if (l.status == 'UNAVAILABLE') l.productId,
+    ];
     await showCartChangedSheet(context, change: e, catalog: catalog);
     ref.read(cartProvider.notifier).removeAll(gone);
     if (mounted && ref.read(cartProvider).isEmpty) context.go(Routes.cart);
@@ -128,6 +147,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final s = context.s;
+    ref.watch(cartCheckProvider);
     final cart = ref.watch(cartProvider);
     final catalog = ref.watch(catalogProvider).value;
     final overrides = ref.watch(priceOverridesProvider);
@@ -140,7 +160,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final totals = Totals.of(priced.subtotal, settings, online: online);
     final paid = _cashPaid;
     final cashShort = !online && paid != null && paid < totals.total;
-    final canPlace = address != null &&
+    final canPlace =
+        address != null &&
         priced.lines.isNotEmpty &&
         priced.subtotal >= settings.minOrderAmount &&
         !cashShort;
@@ -149,10 +170,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       backgroundColor: c.surface,
       body: Column(
         children: [
-          HeaderTop(child: ScreenHeader(title: s.checkoutTitle, onBack: () => context.pop())),
+          HeaderTop(
+            child: ScreenHeader(
+              title: s.checkoutTitle,
+              onBack: () => context.pop(),
+            ),
+          ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, 0, TayranSpace.s4, TayranSpace.s6),
+              padding: const EdgeInsets.fromLTRB(
+                TayranSpace.s4,
+                0,
+                TayranSpace.s4,
+                TayranSpace.s6,
+              ),
               children: [
                 SectionTitle(s.deliverySection),
                 DeliveryCard(
@@ -172,7 +203,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         onSelect: () {},
                         icon: 'bolt',
                         title: s.deliveryNow,
-                        subtitle: Text(s.deliveryNowSub(s.minutes(s.n(settings.etaMinutes)))),
+                        subtitle: Text(
+                          s.deliveryNowSub(s.minutes(s.n(settings.etaMinutes))),
+                        ),
                       ),
                     ),
                     const SizedBox(width: TayranSpace.s3),
@@ -235,17 +268,35 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   onSelect: () => setState(() => _online = true),
                   icon: 'card',
                   title: s.payOnline,
-                  subtitle: Text(onlineEnabled
-                      ? s.onlineFeeNote(s.price(toEgp(settings.onlinePaymentFee)))
-                      : s.onlineSoon),
+                  subtitle: Text(
+                    onlineEnabled
+                        ? s.onlineFeeNote(
+                            s.price(toEgp(settings.onlinePaymentFee)),
+                          )
+                        : s.onlineSoon,
+                  ),
                   extra: onlineEnabled
-                      ? Text(s.cardsAccepted, style: TayranTypography.caption.copyWith(color: c.inkMuted))
+                      ? Text(
+                          s.cardsAccepted,
+                          style: TayranTypography.caption.copyWith(
+                            color: c.inkMuted,
+                          ),
+                        )
                       : null,
-                  child: Row(children: [
-                    TayranIcon('shield', size: 18, color: c.ink),
-                    const SizedBox(width: TayranSpace.s2),
-                    Expanded(child: Text(s.securePageNote, style: TayranTypography.caption.copyWith(color: c.ink))),
-                  ]),
+                  child: Row(
+                    children: [
+                      TayranIcon('shield', size: 18, color: c.ink),
+                      const SizedBox(width: TayranSpace.s2),
+                      Expanded(
+                        child: Text(
+                          s.securePageNote,
+                          style: TayranTypography.caption.copyWith(
+                            color: c.ink,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: TayranSpace.s6),
                 BillSummary(
@@ -259,7 +310,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: TayranSpace.s3),
-                  Text(_error!, style: TayranTypography.label.copyWith(color: c.danger)),
+                  Text(
+                    _error!,
+                    style: TayranTypography.label.copyWith(color: c.danger),
+                  ),
                 ],
               ],
             ),
@@ -273,7 +327,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             note: priced.subtotal < settings.minOrderAmount
                 ? s.minOrderNote(s.price(toEgp(settings.minOrderAmount)))
                 : null,
-            onPressed: canPlace ? () => _place(priced, totals, address.id) : null,
+            onPressed: canPlace
+                ? () => _place(priced, totals, address.id)
+                : null,
           ),
         ],
       ),
@@ -283,7 +339,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
 /// "هتدفع بكام؟" with quick amounts and the change the courier will bring.
 class _CashField extends StatelessWidget {
-  const _CashField({required this.controller, required this.total, required this.paid, required this.short});
+  const _CashField({
+    required this.controller,
+    required this.total,
+    required this.paid,
+    required this.short,
+  });
 
   final TextEditingController controller;
   final int total;
@@ -316,7 +377,9 @@ class _CashField extends StatelessWidget {
           suffix: s.isArabic ? 'ج.م' : 'EGP',
           textInputAction: TextInputAction.done,
           error: short ? s.cashLessThanTotal : null,
-          helper: p != null && p > total ? s.changeBack(s.price(toEgp(p - total))) : null,
+          helper: p != null && p > total
+              ? s.changeBack(s.price(toEgp(p - total)))
+              : null,
         ),
         const SizedBox(height: TayranSpace.s2),
         Wrap(
@@ -362,7 +425,13 @@ class _Chip extends StatelessWidget {
           // Hugs its text inside the Wrap (an aligned Container would take the full width).
           child: Center(
             widthFactor: 1,
-            child: Text(label, style: TayranTypography.caption.copyWith(color: active ? c.onNavy : c.ink, fontWeight: FontWeight.w600)),
+            child: Text(
+              label,
+              style: TayranTypography.caption.copyWith(
+                color: active ? c.onNavy : c.ink,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
       ),

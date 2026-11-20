@@ -194,6 +194,48 @@ class CatalogIntegrationTest extends IntegrationTestBase {
         assertThat(ids(get("/app/bootstrap", customer, null).content().get("categories"))).startsWith(first, second, third);
     }
 
+    /**
+     * The live catalog: an admin edit shows on the category screen and the cart check as soon as
+     * it's saved, with no publish in between.
+     */
+    @Test
+    void liveCatalogReflectsAdminEditsWithoutPublishing() throws Exception {
+        String admin = adminToken();
+        String customer = customerToken("01098765434");
+        long categoryId = post("/admin/categories", category("ألبان حية", "Live dairy", null), admin).content().get("id").asLong();
+        long subId = post("/admin/categories/" + categoryId + "/subcategories",
+                Map.of("nameAr", "لبن", "nameEn", "Milk"), admin).content().get("id").asLong();
+        long milkId = post("/admin/products", product(subId, "لبن كامل", "Full milk", null, true, "40", null), admin)
+                .content().get("id").asLong();
+        String page = "/catalog/stores/1/categories/" + categoryId;
+
+        // Visible right away, in the published file's shape.
+        JsonNode live = get(page, customer, null).content();
+        assertThat(byId(live.get("categories"), categoryId).get("nameEn").asString()).isEqualTo("Live dairy");
+        assertThat(byId(live.get("subcategories"), subId).get("cat").asLong()).isEqualTo(categoryId);
+        assertThat(byId(live.get("products"), milkId).get("price").asInt()).isEqualTo(40);
+
+        // A price edit: the next read has it (the cache was cleared on commit).
+        put("/admin/products/" + milkId, product(subId, "لبن كامل", "Full milk", null, true, "38", "40"), admin);
+        JsonNode edited = byId(get(page, customer, null).content().get("products"), milkId);
+        assertThat(edited.get("price").asInt()).isEqualTo(38);
+        assertThat(edited.get("oldPrice").asInt()).isEqualTo(40);
+
+        // The cart check returns current products and leaves out what can't be bought.
+        JsonNode cart = get("/catalog/stores/1/products?ids=" + milkId + ",999999", customer, null).content();
+        assertThat(cart.size()).isEqualTo(1);
+        assertThat(cart.get(0).get("price").asInt()).isEqualTo(38);
+
+        put("/admin/products/" + milkId, product(subId, "لبن كامل", "Full milk", null, false, "38", "40"), admin);
+        assertThat(byId(get(page, customer, null).content().get("products"), milkId)).isNull();
+        assertThat(get("/catalog/stores/1/products?ids=" + milkId, customer, null).content().size()).isZero();
+
+        // A hidden category is gone; admins can't use the customer endpoints.
+        put("/admin/categories/" + categoryId + "/active", Map.of("active", false), admin);
+        assertThat(get(page, customer, null).code()).isEqualTo("NOT_FOUND");
+        assertThat(get(page, admin, null).status()).isEqualTo(403);
+    }
+
     // ---- helpers ---------------------------------------------------------------------------
 
     private int catalogVersion(String customer) throws Exception {

@@ -147,7 +147,26 @@ class CatalogProduct {
   final String? description;
   final String? ingredients;
 
+  /// Subcategory id for a product that is still known (e.g. in the cart) but no longer listed.
+  static const detached = -1;
+
   String name(bool arabic) => arabic ? nameAr : nameEn;
+
+  CatalogProduct copyWith({int? subcategoryId, bool? available}) =>
+      CatalogProduct(
+        id: id,
+        subcategoryId: subcategoryId ?? this.subcategoryId,
+        nameAr: nameAr,
+        nameEn: nameEn,
+        size: size,
+        price: price,
+        available: available ?? this.available,
+        oldPrice: oldPrice,
+        img: img,
+        bg: bg,
+        description: description,
+        ingredients: ingredients,
+      );
 
   /// On offer when the admin set a higher old price.
   bool get onSale => oldPrice != null && oldPrice! > price;
