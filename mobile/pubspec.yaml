@@ -23,6 +23,9 @@ dependencies:
   tayran_ui:
     path: ../packages/tayran_ui
   path_provider: ^2.1.6
+  firebase_core: ^5.2.0
+  firebase_messaging: ^17.1.0
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:
@@ -33,6 +36,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - assets/images/

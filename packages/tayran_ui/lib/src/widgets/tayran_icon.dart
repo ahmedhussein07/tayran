@@ -52,6 +52,23 @@ class TayranIcon extends StatelessWidget {
     'scooter':
         '<rect x="2.5" y="5" width="8" height="7" rx="1.5"/><circle cx="6.5" cy="18" r="2.5"/>'
         '<circle cx="18" cy="18" r="2.5"/><path d="M4 15h9.5l3-9H14"/><path d="M16.5 6l1.5 9.5"/>',
+    'bag': '<path d="M5 8.5h14l-1.1 11a1.5 1.5 0 0 1-1.5 1.5H7.6a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/>',
+    'bell': '<path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 2h-14z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+    'card': '<rect x="2.5" y="5.5" width="19" height="13" rx="2.2"/><path d="M2.5 10h19M6.5 15h4"/>',
+    'cash': '<rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/>',
+    'clock': '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    'lock': '<rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.5v2"/>',
+    'note': '<path d="M4.5 19.5h4l10.2-10.2a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4.5 15.5z"/><path d="M13.5 6.5l4 4"/>',
+    'phone': '<path d="M6 3.5h3l1.6 4.2-2 1.3a10.5 10.5 0 0 0 6.4 6.4l1.3-2 4.2 1.6v3a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 4.5 5.1 1.5 1.5 0 0 1 6 3.5z"/>',
+    'refresh': '<path d="M19.5 12a7.5 7.5 0 0 1-13.1 5M4.5 12a7.5 7.5 0 0 1 13.1-5"/><path d="M17.8 3v4h-4M6.2 21v-4h4"/>',
+    'shield': '<path d="M12 3 4.5 6v5.6c0 4.5 3.1 8.1 7.5 9.4 4.4-1.3 7.5-4.9 7.5-9.4V6z"/><path d="m8.8 12.2 2.3 2.3 4.3-4.6"/>',
+    'swap': '<path d="M4.5 8.5h14l-3.5-3.5M19.5 15.5h-14l3.5 3.5"/>',
+    'calendar': '<rect x="3.5" y="5" width="17" height="15.5" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
+    'box': '<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/>',
+    // Profile rows, drawn on the same grid and stroke as the design's set.
+    'globe': '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5S9.7 5.9 12 3.5z"/>',
+    'moon': '<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/>',
+    'logout': '<path d="M14 4.5H6.5a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5H14"/><path d="M10 12h10M16.5 8.5 20 12l-3.5 3.5"/>',
   };
 
   @override

@@ -13,6 +13,11 @@ import java.util.List;
 public record BootstrapResponse(
         NextStep nextStep,
         String firstName,
+        String lastName,
+        /* The signed-in phone (+20…), shown read-only on the profile. */
+        String phone,
+        /* "ar" or "en": the language push texts are sent in. */
+        String language,
         /* The default address, or null before the address step. */
         AddressDto address,
         String etaText,
@@ -20,7 +25,14 @@ public record BootstrapResponse(
         List<CategoryDto> categories,
         /* Null until the store's catalog has been published once. */
         CatalogRef catalog,
-        ImageTemplates images) {
+        ImageTemplates images,
+        /* Fees, free-delivery threshold, minimum order and ETA of the customer's store. */
+        com.tayran.service.impl.StoreSettingsService.StoreSettingsDto settings,
+        /* Saved addresses, default first. */
+        List<com.tayran.model.ProfileDtos.SavedAddressDto> addresses,
+        /* Orders not yet delivered or cancelled, newest first. */
+        List<com.tayran.model.order.OrderDtos.OrderSummaryDto> activeOrders,
+        boolean onlinePaymentEnabled) {
 
     public record AddressDto(long id, long villageId, String villageNameAr, String villageNameEn,
                              long streetId, String streetNameAr, String streetNameEn, String landmark) {

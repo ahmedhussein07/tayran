@@ -2,7 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tayran_ui/tayran_ui.dart';
 
+import '../../../core/account/account_repository.dart';
+import '../../../core/account/saved_address.dart';
+import '../../../core/prefs/app_prefs.dart';
 import '../../../core/catalog/catalog.dart';
+import '../../../core/orders/order_models.dart';
+import '../../../core/orders/pricing.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/session/session.dart';
 import '../../../core/session/session_controller.dart';
@@ -15,6 +20,12 @@ final bootstrapProvider = FutureProvider.autoDispose<Bootstrap>((ref) async {
   await ref
       .read(sessionControllerProvider.notifier)
       .setNextStep(bootstrap.nextStep);
+  // Push texts follow the app's language: if the backend has another one (changed while that
+  // call failed, or on another phone), send it once.
+  final language = ref.read(appPrefsProvider).language;
+  if (bootstrap.language != language) {
+    ref.read(accountRepositoryProvider).setLanguage(language).ignore();
+  }
   return bootstrap;
 });
 
@@ -68,6 +79,9 @@ class Bootstrap {
   const Bootstrap({
     required this.nextStep,
     required this.firstName,
+    required this.lastName,
+    required this.phone,
+    required this.language,
     required this.address,
     required this.etaText,
     required this.etaMinutes,
@@ -75,10 +89,21 @@ class Bootstrap {
     required this.catalog,
     required this.catalogStoreId,
     required this.images,
+    required this.settings,
+    required this.addresses,
+    required this.activeOrders,
+    required this.onlinePaymentEnabled,
   });
 
   final NextStep nextStep;
   final String? firstName;
+  final String? lastName;
+
+  /// The signed-in phone (+20…), read-only on the profile.
+  final String phone;
+
+  /// The language the backend sends push texts in.
+  final String language;
   final HomeAddress? address;
   final String etaText;
   final int etaMinutes;
@@ -89,11 +114,24 @@ class Bootstrap {
   final int catalogStoreId;
   final ImageTemplates images;
 
+  /// Fees, free-delivery threshold, minimum order and ETA of the customer's store.
+  final StoreSettings settings;
+
+  /// Saved addresses, default first.
+  final List<SavedAddress> addresses;
+
+  /// Orders not yet delivered or cancelled.
+  final List<OrderSummary> activeOrders;
+  final bool onlinePaymentEnabled;
+
   factory Bootstrap.fromJson(Map c) {
     final a = c['address'] as Map?;
     return Bootstrap(
       nextStep: NextStep.parse(c['nextStep'] as String),
       firstName: c['firstName'] as String?,
+      lastName: c['lastName'] as String?,
+      phone: (c['phone'] as String?) ?? '',
+      language: (c['language'] as String?) ?? 'ar',
       address: a == null
           ? null
           : HomeAddress(
@@ -119,6 +157,10 @@ class Bootstrap {
       catalog: CatalogRef.fromJson(c['catalog'] as Map?),
       catalogStoreId: ((c['catalog'] as Map?)?['store'] as num?)?.toInt() ?? 1,
       images: ImageTemplates.fromJson(c['images'] as Map),
+      settings: c['settings'] == null ? StoreSettings.fallback : StoreSettings.fromJson(c['settings'] as Map),
+      addresses: [for (final a in (c['addresses'] as List? ?? const [])) SavedAddress.fromJson(a as Map)],
+      activeOrders: [for (final o in (c['activeOrders'] as List? ?? const [])) OrderSummary.fromJson(o as Map)],
+      onlinePaymentEnabled: (c['onlinePaymentEnabled'] as bool?) ?? false,
     );
   }
 }

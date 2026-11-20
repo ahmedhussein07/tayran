@@ -54,6 +54,10 @@ public class User extends AbstractPersistableEntity {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
+    /** "ar" or "en": the language of push texts. */
+    @Column(name = "preferred_language", nullable = false, length = 2)
+    private String preferredLanguage = "ar";
+
     public User(String phone) {
         this(phone, UserRole.CUSTOMER);
     }

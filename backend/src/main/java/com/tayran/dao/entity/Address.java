@@ -38,4 +38,12 @@ public class Address extends AbstractPersistableEntity {
 
     @Column(name = "is_default", nullable = false)
     private boolean defaultAddress;
+
+    /** Optional, e.g. "home" or "work". */
+    @Column(name = "label", length = 30)
+    private String label;
+
+    /** Soft delete; past orders keep their own snapshot. */
+    @Column(name = "deleted_at")
+    private java.time.Instant deletedAt;
 }

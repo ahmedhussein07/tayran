@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private AuthResponse toAuthResponse(User user, TokenPair pair) {
-        boolean hasAddress = addressRepository.existsByUserIdAndDefaultAddressTrue(user.getId());
+        boolean hasAddress = addressRepository.existsByUserIdAndDefaultAddressTrueAndDeletedAtIsNull(user.getId());
         return new AuthResponse(pair.accessToken(), pair.refreshToken(), nextStepResolver.resolve(user, hasAddress));
     }
 }

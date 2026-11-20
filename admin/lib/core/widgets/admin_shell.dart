@@ -5,6 +5,7 @@ import 'package:tayran_ui/tayran_ui.dart';
 
 import '../../features/account/change_password_dialog.dart';
 import '../auth/auth_controller.dart';
+import '../live/live_orders.dart';
 
 /// Side navigation and the signed-in admin's menu around every page.
 class AdminShell extends ConsumerWidget {
@@ -14,6 +15,7 @@ class AdminShell extends ConsumerWidget {
   final Widget child;
 
   static const _items = [
+    (path: '/orders', label: 'الطلبات', icon: Icons.receipt_long_outlined),
     (path: '/categories', label: 'الأقسام', icon: Icons.grid_view_outlined),
     (path: '/products', label: 'المنتجات', icon: Icons.inventory_2_outlined),
     (
@@ -21,12 +23,15 @@ class AdminShell extends ConsumerWidget {
       label: 'المشرفون',
       icon: Icons.admin_panel_settings_outlined,
     ),
+    (path: '/settings', label: 'الإعدادات', icon: Icons.tune_outlined),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final admin = ref.watch(authControllerProvider).admin;
+    // Keeps the live order feed open on every page; the badge counts orders waiting for review.
+    final newOrders = ref.watch(liveOrdersProvider).newCount;
     return Scaffold(
       body: Row(
         children: [
@@ -69,6 +74,7 @@ class AdminShell extends ConsumerWidget {
                   _NavItem(
                     label: item.label,
                     icon: item.icon,
+                    badge: item.path == '/orders' ? newOrders : 0,
                     selected: location.startsWith(item.path),
                     onTap: () => context.go(item.path),
                   ),
@@ -151,11 +157,13 @@ class _NavItem extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onTap,
+    this.badge = 0,
   });
 
   final String label;
   final IconData icon;
   final bool selected;
+  final int badge;
   final VoidCallback onTap;
 
   @override
@@ -191,6 +199,25 @@ class _NavItem extends StatelessWidget {
                     color: selected ? c.ink : c.inkMuted,
                   ),
                 ),
+                const Spacer(),
+                if (badge > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: c.brand,
+                      borderRadius: BorderRadius.circular(TayranRadius.full),
+                    ),
+                    child: Text(
+                      '$badge',
+                      style: TayranTypography.micro.copyWith(
+                        color: c.onBrand,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

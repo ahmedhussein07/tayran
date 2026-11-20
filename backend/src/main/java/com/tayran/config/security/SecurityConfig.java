@@ -41,6 +41,8 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
+                        // Async (SSE) and error dispatches belong to a request that was already authorized.
+                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ASYNC, jakarta.servlet.DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/otp/request", "/auth/otp/verify", "/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/admin/auth/login", "/admin/auth/refresh", "/admin/auth/logout").permitAll()

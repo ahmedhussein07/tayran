@@ -26,5 +26,15 @@
   {"errorKey": "IMAGE_TYPE_UNSUPPORTED", "httpStatus": 400, "messageAr": "الصورة لازم تكون JPEG أو PNG أو WebP", "messageEn": "The image must be JPEG, PNG or WebP"},
   {"errorKey": "IMAGE_TOO_LARGE", "httpStatus": 413, "messageAr": "الصورة أكبر من ١٠ ميجا", "messageEn": "The image is larger than 10 MB"},
   {"errorKey": "IMAGE_DIMENSIONS_TOO_LARGE", "httpStatus": 400, "messageAr": "أبعاد الصورة أكبر من ٦٠٠٠ بكسل", "messageEn": "The image is larger than 6000 pixels on a side"},
-  {"errorKey": "IMAGE_UNREADABLE", "httpStatus": 400, "messageAr": "معرفناش نقرا الصورة", "messageEn": "The image could not be read"}
+  {"errorKey": "IMAGE_UNREADABLE", "httpStatus": 400, "messageAr": "معرفناش نقرا الصورة", "messageEn": "The image could not be read"},
+  {"errorKey": "CART_CHANGED", "httpStatus": 409, "messageAr": "فيه حاجات اتغيرت في سلتك، راجعها وأكد تاني", "messageEn": "Some items in your cart changed; review them and confirm again"},
+  {"errorKey": "MIN_ORDER_NOT_MET", "httpStatus": 400, "messageAr": "الطلب أقل من الحد الأدنى", "messageEn": "The order is below the minimum amount"},
+  {"errorKey": "PAYMENT_METHOD_NOT_AVAILABLE", "httpStatus": 400, "messageAr": "الدفع الأونلاين لسه مش متاح", "messageEn": "Online payment isn't available yet"},
+  {"errorKey": "IDEMPOTENCY_KEY_REQUIRED", "httpStatus": 400, "messageAr": "الطلب ناقص بيانات، جرب تاني", "messageEn": "The Idempotency-Key header is required"},
+  {"errorKey": "ORDER_STATE_CHANGED", "httpStatus": 409, "messageAr": "الطلب اتغير من شوية، حدّث الصفحة", "messageEn": "The order changed meanwhile; reload it"},
+  {"errorKey": "INVALID_ADDRESS", "httpStatus": 400, "messageAr": "العنوان ده مش موجود، اختار عنوان تاني", "messageEn": "That address doesn't exist; choose another one"},
+  {"errorKey": "LAST_ADDRESS", "httpStatus": 409, "messageAr": "لازم يكون عندك عنوان واحد على الأقل", "messageEn": "You need at least one address"},
+  {"errorKey": "REPLACEMENT_NOT_ALLOWED", "httpStatus": 400, "messageAr": "العميل طالب ترجع فلوس المنتج ده، مش استبداله", "messageEn": "The customer asked for a refund on this item, not a replacement"},
+  {"errorKey": "EMPTY_ORDER", "httpStatus": 400, "messageAr": "مينفعش الطلب يبقى فاضي، الغيه بدل كده", "messageEn": "An order can't be left empty; cancel it instead"},
+  {"errorKey": "INVALID_COURIER_PHONE", "httpStatus": 400, "messageAr": "رقم الطيّار مش صحيح", "messageEn": "Invalid courier phone number"}
 ]

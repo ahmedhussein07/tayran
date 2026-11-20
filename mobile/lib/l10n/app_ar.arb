@@ -1,0 +1,511 @@
+{
+  "@@locale": "ar",
+  "welcomeTitle": "أهلًا بيك في طيران",
+  "welcomeSub": "دخّل رقم موبايلك وهنبعتلك كود",
+  "brandAlt": "شعار طيران",
+  "phoneLabel": "رقم الموبايل",
+  "phoneInvalid": "الرقم مش صحيح",
+  "sendCode": "ابعتلي الكود",
+  "legalPrefix": "بالدخول انت موافق على ",
+  "terms": "الشروط",
+  "and": " و",
+  "privacy": "سياسة الخصوصية",
+  "otpTitle": "دخّل الكود",
+  "otpSentTo": "بعتناه على ",
+  "editNumber": "تعديل الرقم",
+  "otpLabel": "كود التأكيد",
+  "otpWrong": "الكود غلط، جرب تاني",
+  "confirm": "تأكيد",
+  "resendIn": "ابعت الكود تاني خلال {t}",
+  "@resendIn": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "resendAsk": "موصلكش الكود؟ ",
+  "resend": "ابعت تاني",
+  "back": "رجوع",
+  "stepOfLabel": "خطوة {n} من {m}",
+  "@stepOfLabel": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "required": "الحقل ده مطلوب",
+  "loading": "لحظة…",
+  "retry": "جرب تاني",
+  "close": "اقفل",
+  "nameTitle": "نتعرف عليك",
+  "nameSub": "عشان الطيّار يعرف يناديك",
+  "firstName": "الاسم الأول",
+  "lastName": "الاسم الأخير",
+  "nameTooShort": "اكتب حرفين على الأقل",
+  "next": "التالي",
+  "addressTitle": "هنوصلك فين؟",
+  "addressSub": "اختار بلدك وشارعك واكتبلنا علامة مميزة",
+  "village": "البلد",
+  "villagePlaceholder": "اختار بلدك",
+  "villageSheetTitle": "اختار بلدك",
+  "villageSearch": "دوّر على بلدك",
+  "street": "الشارع",
+  "streetPlaceholder": "اختار الشارع",
+  "streetNeedsVillage": "اختار البلد الأول",
+  "streetSheetTitle": "شوارع {v}",
+  "@streetSheetTitle": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "streetSearch": "دوّر على شارعك",
+  "landmark": "علامة مميزة",
+  "landmarkPlaceholder": "مثلًا: جنب جامع النور، البيت اللي بابه أخضر",
+  "landmarkTooShort": "اكتب علامة أوضح شوية",
+  "charsLabel": "{n}/{m}",
+  "@charsLabel": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "m": {
+        "type": "String"
+      }
+    }
+  },
+  "villageNotFound": "مش لاقي بلدك؟",
+  "notServedYet": "لسه مش بنوصل هناك، بس قريب إن شاء الله",
+  "backToList": "رجوع للقائمة",
+  "noResults": "مفيش نتايج لـ \"{q}\"",
+  "@noResults": {
+    "placeholders": {
+      "q": {
+        "type": "String"
+      }
+    }
+  },
+  "letsStart": "يلا نبدأ",
+  "locationsFailed": "معرفناش نجيب البلاد، جرب تاني",
+  "greeting": "أهلًا {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingNoName": "أهلًا بيك",
+  "deliverTo": "التوصيل إلى",
+  "etaBadge": "التوصيل خلال {eta}",
+  "@etaBadge": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "search": "دوّر على عيش، لبن، فاكهة…",
+  "searchLabel": "البحث",
+  "categories": "الأقسام",
+  "seeAll": "الكل",
+  "all": "الكل",
+  "offers": "عروض",
+  "sortSuggested": "المقترح",
+  "sortLow": "الأرخص",
+  "sortHigh": "الأغلى",
+  "sortLabel": "الترتيب",
+  "discountLabel": "خصم {p}٪",
+  "@discountLabel": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "soldOut": "خلصان",
+  "soldOutLong": "خلص من المخزن",
+  "addToCart": "أضف للسلة",
+  "updateCart": "حدّث السلة",
+  "addedToCart": "اتضافت للسلة",
+  "add": "أضف",
+  "remove": "شيل من السلة",
+  "decrease": "قلّل",
+  "increase": "زوّد",
+  "description": "الوصف",
+  "ingredients": "المكونات",
+  "sameSection": "من نفس القسم",
+  "alternatives": "بدائل متوفرة",
+  "viewCart": "عرض السلة",
+  "cartComingSoon": "السلة والدفع جايين في التحديث الجاي",
+  "emptyCategory": "مفيش منتجات هنا لسه",
+  "noOffers": "مفيش عروض في القسم ده دلوقتي",
+  "catalogFailed": "مقدرناش نحمّل المنتجات، اتأكد من النت وجرب تاني",
+  "categoryGone": "القسم ده مش متاح دلوقتي",
+  "chooseCategory": "اختار قسم",
+  "tabHome": "الرئيسية",
+  "tabCategories": "الأقسام",
+  "tabSearch": "البحث",
+  "tabOrders": "طلباتي",
+  "tabAccount": "حسابي",
+  "homeFailed": "معرفناش نحمّل الصفحة",
+  "bannerDelivery": "طلبك طاير لك: كل حاجات البيت، من غير ما تتحرك من مكانك",
+  "bannerBreakfast": "فطارك في دقايق: عيش بلدي، جبنة، بيض ولبن على باب البيت",
+  "bannerPayment": "ادفع بالفيزا أو المحفظة: آمن وسريع، أو كاش لما الطلب يوصل",
+  "errOtpExpired": "الكود خلص وقته، اطلب كود جديد",
+  "errOtpTooMany": "جربت كتير، اطلب كود جديد",
+  "errResendTooSoon": "استنى شوية قبل ما تطلب كود تاني",
+  "errRateLimited": "طلبت أكواد كتير، جرب بعد شوية",
+  "errValidation": "راجع البيانات وجرب تاني",
+  "errInvalidStreet": "الشارع ده مش في البلد اللي اخترتها",
+  "errSession": "الجلسة خلصت، سجل دخول تاني",
+  "errNetwork": "مفيش اتصال، اتأكد من النت وجرب تاني",
+  "errGeneric": "حصلت مشكلة، جرب تاني",
+  "cartTitle": "السلة",
+  "clearCart": "فضّي السلة",
+  "clearCartConfirm": "تفضّي السلة كلها؟",
+  "change": "غيّر",
+  "arrivesIn": "هتوصلك خلال {eta}",
+  "@arrivesIn": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "minutes": "{n} دقيقة",
+  "@minutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "addForFreeDelivery": "زوّد {amount} والتوصيل علينا",
+  "@addForFreeDelivery": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "freeDeliveryReached": "التوصيل علينا في الطلب ده",
+  "yourOrder": "طلبك",
+  "forgotSomething": "نسيت حاجة؟",
+  "promoCode": "كود الخصم",
+  "comingSoon": "قريبًا",
+  "apply": "طبّق",
+  "summaryTitle": "ملخص الفاتورة",
+  "subtotalLabel": "قيمة المنتجات",
+  "deliveryLabel": "رسوم التوصيل",
+  "billDiscount": "الخصم",
+  "onlineFeeLabel": "رسوم الدفع الأونلاين",
+  "totalLabel": "الإجمالي",
+  "free": "مجاني",
+  "youSaved": "وفّرت {amount} في الطلب ده",
+  "@youSaved": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "minOrderNote": "الحد الأدنى للطلب {amount}",
+  "@minOrderNote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "continueOrder": "كمّل الطلب",
+  "itemRemoved": "شلنا {name}",
+  "@itemRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "رجّعه",
+  "cartCleared": "فضّينا السلة",
+  "emptyCartTitle": "سلتك فاضية",
+  "emptyCartBody": "اختار اللي محتاجه وإحنا نوصّله لحد بابك",
+  "startShopping": "ابدأ التسوق",
+  "removeAction": "شيل",
+  "ifOutOfStock": "لو خلص: {choice}",
+  "@ifOutOfStock": {
+    "placeholders": {
+      "choice": {
+        "type": "String"
+      }
+    }
+  },
+  "subReplace": "استبدله بمنتج شبهه",
+  "subReplaceHint": "نختار منتج قريب بنفس السعر أو أقل",
+  "subRefund": "رجّع فلوسه",
+  "subRefundHint": "مش هتدفع تمنه",
+  "subCall": "كلمني",
+  "subCallHint": "هنكلمك نسألك قبل ما نغيّر حاجة",
+  "unavailableInCart": "خلص من المخزن ومش هيتحسب",
+  "checkoutTitle": "إتمام الطلب",
+  "deliverySection": "التوصيل",
+  "deliveryNow": "دلوقتي",
+  "deliveryNowSub": "خلال {eta}",
+  "@deliveryNowSub": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleDelivery": "حدد معاد",
+  "noteToCourier": "ملاحظة للطيّار (اختياري)",
+  "noteHint": "مثلًا: رن الجرس مرتين",
+  "paymentSection": "طريقة الدفع",
+  "payCash": "كاش عند الاستلام",
+  "payCashSub": "ادفع للطيّار لما يوصلك",
+  "payWith": "هتدفع بكام؟ (اختياري)",
+  "changeBack": "الطيّار هيرجعلك {amount}",
+  "@changeBack": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payOnline": "ادفع أونلاين",
+  "onlineFeeNote": "+{amount} رسوم دفع أونلاين",
+  "@onlineFeeNote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "securePageNote": "هتتحول لصفحة دفع آمنة",
+  "cardsAccepted": "بنقبل فيزا وماستركارد وميزة",
+  "confirmOrder": "أكد الطلب",
+  "onlineSoon": "الدفع الأونلاين قريبًا",
+  "addNewAddress": "إضافة عنوان جديد",
+  "chooseAddress": "هنوصلك فين؟",
+  "cashLessThanTotal": "المبلغ لازم يكون قد الإجمالي أو أكتر",
+  "cartChangedTitle": "فيه حاجات اتغيرت في سلتك",
+  "cartChangedBody": "حدّثنا السلة، راجعها وأكد تاني",
+  "nowUnavailable": "خلص ومش هيتطلب",
+  "priceNowIs": "السعر بقى {price}",
+  "@priceNowIs": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "newTotal": "الإجمالي الجديد",
+  "reviewAndConfirm": "تمام",
+  "orderPlacedTitle": "طلبك اتأكد!",
+  "payCashAmount": "هتدفع {amount} كاش للطيّار",
+  "@payCashAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cashNoteTitle": "جهّز الكاش",
+  "cashNoteChange": "الطيّار هيجيبلك باقي {change} من {paid}",
+  "@cashNoteChange": {
+    "placeholders": {
+      "change": {
+        "type": "String"
+      },
+      "paid": {
+        "type": "String"
+      }
+    }
+  },
+  "cashNoteExact": "لو المبلغ مظبوط يبقى أحسن",
+  "orderDetails": "تفاصيل الطلب",
+  "trackOrder": "تابع طلبك",
+  "backHome": "رجوع للرئيسية",
+  "orderNumberItems": "طلب رقم {number} – {items}",
+  "@orderNumberItems": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "itemsLabel": "المنتجات",
+  "paymentLabel": "الدفع",
+  "addressLabel": "العنوان",
+  "paidCash": "{amount} كاش عند الاستلام",
+  "@paidCash": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paidOnline": "{amount} أونلاين",
+  "@paidOnline": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPermTitle": "نبلغك بكل خطوة؟",
+  "notifPermBody": "عشان نبلغك أول ما طلبك يتحرك",
+  "notifAllow": "ماشي، بلغني",
+  "notifLater": "مش دلوقتي",
+  "notifOffHint": "الإشعارات مقفولة، فعّلها عشان نبلغك بطلبك",
+  "notifTurnOn": "فعّلها",
+  "orderUpdate": "طلب رقم {number}: {status}",
+  "@orderUpdate": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "stagePlaced": "استلمنا طلبك",
+  "stageConfirmed": "أكدنا طلبك وبنجهزه",
+  "stageOnTheWay": "طيّارك في الطريق",
+  "stageDelivered": "اتسلم",
+  "expectedAt": "متوقع {time}",
+  "@expectedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "courierLabel": "الطيّار",
+  "callCourier": "كلّم الطيّار",
+  "orderEdited": "عدّلنا طلبك",
+  "editedRemoved": "اتشال: {name}",
+  "@editedRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "editedReduced": "{name}: {qty} بدل {orig}",
+  "@editedReduced": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      },
+      "orig": {
+        "type": "String"
+      }
+    }
+  },
+  "editedReplaced": "{from} ← اتبدل بـ {to}",
+  "@editedReplaced": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "cancelOrder": "إلغاء الطلب",
+  "cancelConfirmTitle": "تلغي الطلب؟",
+  "cancelConfirmBody": "لسه محدش بدأ يجهزه، تقدر تلغيه دلوقتي",
+  "keepOrder": "لا، خليه",
+  "cancelledTitle": "الطلب اتلغى",
+  "cancelledByYou": "انت لغيت الطلب ده",
+  "trackingTitle": "طلب رقم {number}",
+  "@trackingTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "totalWas": "كان {amount}",
+  "@totalWas": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ordersTitle": "طلباتي",
+  "activeOrdersTitle": "طلبات جارية",
+  "pastOrders": "طلبات قديمة",
+  "noOrdersTitle": "لسه مطلبتش حاجة",
+  "reorder": "اطلب تاني",
+  "reorderAdded": "ضفنا {n} للسلة",
+  "@reorderAdded": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "reorderSkipped": "مش متاح دلوقتي: {names}",
+  "@reorderSkipped": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "reorderNone": "المنتجات دي مش متاحة دلوقتي",
+  "statusCancelled": "اتلغى",
+  "loadMore": "عرض المزيد",
+  "searchSoon": "البحث جاي قريب",
+  "accountTitle": "حسابي",
+  "nameLabel": "الاسم",
+  "editName": "تعديل الاسم",
+  "phoneNotEditable": "رقم الموبايل مش بيتغير",
+  "addressesTitle": "عناويني",
+  "addAddress": "إضافة عنوان",
+  "editAddress": "تعديل العنوان",
+  "deleteAddressConfirm": "تحذف العنوان ده؟",
+  "setDefault": "خليه الأساسي",
+  "defaultBadge": "الأساسي",
+  "addressLabelField": "اسم العنوان (اختياري)",
+  "addressLabelHint": "البيت، الشغل…",
+  "save": "حفظ",
+  "saved": "اتحفظ",
+  "languageTitle": "اللغة",
+  "themeTitle": "المظهر",
+  "themeLight": "فاتح",
+  "themeDark": "غامق",
+  "themeSystem": "تلقائي",
+  "logout": "تسجيل الخروج",
+  "logoutConfirm": "تسجل خروج من الجهاز ده؟",
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "noteRing": "رن الجرس",
+  "noteAtDoor": "سيبه عند الباب",
+  "payAction": "ادفع",
+  "errMinOrder": "الطلب أقل من الحد الأدنى",
+  "errPaymentUnavailable": "طريقة الدفع دي مش متاحة دلوقتي",
+  "errOrderState": "حالة الطلب اتغيرت، بنعرضلك آخر حالة",
+  "errLastAddress": "لازم يفضل عندك عنوان واحد على الأقل",
+  "errInvalidAddress": "العنوان ده مش موجود، اختار عنوان تاني",
+  "errEmptyOrder": "السلة فاضية"
+}

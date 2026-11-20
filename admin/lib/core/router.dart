@@ -6,7 +6,10 @@ import '../features/admins/admins_page.dart';
 import '../features/categories/categories_page.dart';
 import '../features/categories/subcategories_page.dart';
 import '../features/login/login_screen.dart';
+import '../features/orders/order_detail_page.dart';
+import '../features/orders/orders_board_page.dart';
 import '../features/products/products_page.dart';
+import '../features/settings/settings_page.dart';
 import 'auth/auth_controller.dart';
 import 'widgets/admin_shell.dart';
 
@@ -18,7 +21,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(auth.dispose);
 
   return GoRouter(
-    initialLocation: '/categories',
+    initialLocation: '/orders',
     refreshListenable: auth,
     redirect: (context, state) {
       final status = auth.value;
@@ -36,7 +39,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final from = state.uri.queryParameters['from'];
       return from != null && from.startsWith('/') && !from.startsWith('/login')
           ? from
-          : '/categories';
+          : '/orders';
     },
     routes: [
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
@@ -44,6 +47,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) =>
             AdminShell(location: state.matchedLocation, child: child),
         routes: [
+          GoRoute(path: '/orders', builder: (_, _) => const OrdersBoardPage()),
+          GoRoute(
+            path: '/orders/:id',
+            builder: (_, state) => OrderDetailPage(
+              key: ValueKey(state.pathParameters['id']),
+              orderId: int.parse(state.pathParameters['id']!),
+            ),
+          ),
+          GoRoute(path: '/settings', builder: (_, _) => const SettingsPage()),
           GoRoute(
             path: '/categories',
             builder: (_, _) => const CategoriesPage(),

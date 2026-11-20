@@ -3,7 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/cart/cart_controller.dart';
 import '../../../core/catalog/catalog_providers.dart';
+import '../../../core/orders/active_orders.dart';
+import '../../../core/orders/order_models.dart';
+import '../../catalog/presentation/widgets/catalog_bars.dart';
+import '../../orders/presentation/orders_screen.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_router.dart';
 
@@ -33,9 +38,7 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: c.surface,
         bottomNavigationBar: TayranTabBar(
           active: HomeTab.home,
-          onChanged: (
-            _,
-          ) {}, // Only Home exists in Phase 1; the other tabs are placeholders.
+          onChanged: (tab) => goToTab(context, tab),
         ),
         body: Column(
           children: [
@@ -75,12 +78,14 @@ class _HomeContent extends ConsumerWidget {
     final c = context.colors;
     final s = context.s;
     // Start loading the catalog with home, so a category opens instantly.
-    ref.watch(catalogProvider);
+    final catalog = ref.watch(catalogProvider).value;
+    final active = ref.watch(activeOrdersProvider);
+    final cart = PricedCart.of(ref.watch(cartProvider), catalog, ref.watch(priceOverridesProvider));
     final width = MediaQuery.sizeOf(context).width;
     // Four across inside the 16px gutter, 12px between columns; the name sits under the tile.
     final tile = (width - 2 * TayranSpace.s4 - 3 * TayranSpace.s3) / 4;
 
-    return RefreshIndicator(
+    return Stack(children: [RefreshIndicator(
       color: c.ink,
       backgroundColor: c.surfaceRaised,
       onRefresh: () async {
@@ -106,7 +111,8 @@ class _HomeContent extends ConsumerWidget {
                   const SizedBox(height: TayranSpace.s2),
                   AddressHeader(
                     address: data.address?.label(s.isArabic) ?? '',
-                    etaText: data.etaText,
+                    // In the app's language (the bootstrap's etaText is Arabic only).
+                    etaText: s.minutes(s.n(data.etaMinutes)),
                   ),
                 ],
               ),
@@ -116,6 +122,12 @@ class _HomeContent extends ConsumerWidget {
             pinned: true,
             delegate: _SearchBand(colors: c, shadows: context.shadows),
           ),
+          // Orders on their way: one card each, above everything else.
+          for (final o in active)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(TayranSpace.s4, TayranSpace.s4, TayranSpace.s4, 0),
+              sliver: SliverToBoxAdapter(child: ActiveOrderCard(order: o)),
+            ),
           SliverPadding(
             padding: const EdgeInsets.only(top: TayranSpace.s4),
             sliver: SliverToBoxAdapter(
@@ -160,11 +172,11 @@ class _HomeContent extends ConsumerWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
+            padding: EdgeInsets.fromLTRB(
               TayranSpace.s4,
               TayranSpace.s3,
               TayranSpace.s4,
-              TayranSpace.s8,
+              cart.count > 0 ? 96 : TayranSpace.s8,
             ),
             sliver: SliverGrid(
               // The design's grid: repeat(4, 1fr), 14px row gap, 12px column gap.
@@ -190,7 +202,19 @@ class _HomeContent extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ),
+      if (cart.count > 0)
+        PositionedDirectional(
+          start: TayranSpace.s3,
+          end: TayranSpace.s3,
+          bottom: 10,
+          child: CartBar(
+            count: cart.count,
+            total: toEgp(cart.subtotal),
+            onTap: () => context.push(Routes.cart),
+          ),
+        ),
+    ]);
   }
 }
 

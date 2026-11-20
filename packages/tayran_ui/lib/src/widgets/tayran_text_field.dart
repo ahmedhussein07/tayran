@@ -119,6 +119,9 @@ class TayranTextField extends StatefulWidget {
     this.onBlur,
     this.onSubmitted,
     this.autofocus = false,
+    this.numeric = false,
+    this.suffix,
+    this.helper,
   });
 
   final String label;
@@ -134,6 +137,15 @@ class TayranTextField extends StatefulWidget {
   final VoidCallback? onBlur;
   final ValueChanged<String>? onSubmitted;
   final bool autofocus;
+
+  /// Digits only, with the number keyboard (amounts).
+  final bool numeric;
+
+  /// A unit after the text ("ج.م").
+  final String? suffix;
+
+  /// A hint under the field, replaced by [error].
+  final String? helper;
 
   @override
   State<TayranTextField> createState() => _TayranTextFieldState();
@@ -169,6 +181,7 @@ class _TayranTextFieldState extends State<TayranTextField> {
     return FieldFrame(
       label: widget.label,
       error: widget.error,
+      helper: widget.helper,
       trailingLabel: widget.showCount && widget.maxLength != null
           ? Digits.localize('$count/${widget.maxLength}', arabic: arabic)
           : null,
@@ -179,13 +192,28 @@ class _TayranTextFieldState extends State<TayranTextField> {
           horizontal: 14,
           vertical: widget.multiline ? 12 : 0,
         ),
-        child: TextField(
+        child: Row(
+          children: [
+            Expanded(child: _field(c)),
+            if (widget.suffix != null) ...[
+              const SizedBox(width: 8),
+              Text(widget.suffix!, style: TayranTypography.label.copyWith(color: c.inkMuted)),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _field(TayranColors c) => TextField(
           controller: widget.controller,
           focusNode: _focus,
           autofocus: widget.autofocus,
           minLines: widget.multiline ? widget.rows : 1,
           maxLines: widget.multiline ? widget.rows : 1,
-          keyboardType: widget.multiline
+          keyboardType: widget.numeric
+              ? TextInputType.number
+              : widget.multiline
               ? TextInputType.multiline
               : TextInputType.text,
           textInputAction:
@@ -194,6 +222,7 @@ class _TayranTextFieldState extends State<TayranTextField> {
                   ? TextInputAction.newline
                   : TextInputAction.next),
           inputFormatters: [
+            if (widget.numeric) FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩]')),
             if (widget.maxLength != null)
               LengthLimitingTextInputFormatter(widget.maxLength),
           ],
@@ -211,8 +240,5 @@ class _TayranTextFieldState extends State<TayranTextField> {
             hintStyle: TayranTypography.bodyLg.copyWith(color: c.inkMuted),
             hintMaxLines: widget.multiline ? widget.rows : 1,
           ),
-        ),
-      ),
-    );
-  }
+        );
 }

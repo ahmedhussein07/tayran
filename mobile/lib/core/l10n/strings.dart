@@ -1,116 +1,33 @@
 import 'package:flutter/widgets.dart';
-
 import 'package:tayran_ui/tayran_ui.dart';
 
-/// UI copy. Arabic (Egyptian) is the product's first language; English is the second locale.
-/// Wording follows the design export (its components' built-in copy and screen READMEs).
-class S {
-  const S._(this.isArabic, this._t);
+import '../../l10n/gen/app_localizations.dart';
 
-  final bool isArabic;
-  final Map<String, String> _t;
+export '../../l10n/gen/app_localizations.dart';
 
-  static const ar = S._(true, _ar);
-  static const en = S._(false, _en);
+/// UI copy lives in lib/l10n/app_ar.arb (the template; Arabic is the product's first language)
+/// and app_en.arb, generated into [S] by `flutter gen-l10n`. Wording follows the design export.
+/// This file adds what ARB can't express: localized digits, Arabic counting, prices, error codes.
+extension StringsContext on BuildContext {
+  S get s => S.of(this);
+}
 
-  static S of(BuildContext context) =>
-      Localizations.localeOf(context).languageCode == 'ar' ? ar : en;
+extension StringsHelpers on S {
+  bool get isArabic => localeName.startsWith('ar');
 
-  String _get(String key, [Map<String, String> args = const {}]) {
-    var value = _t[key] ?? key;
-    args.forEach((k, v) => value = value.replaceAll('{$k}', v));
-    return value;
-  }
-
-  /// Localizes digits for this language.
+  /// Localizes digits for this language (Arabic-Indic in Arabic).
   String n(Object value) => Digits.localize('$value', arabic: isArabic);
 
-  // Phone
-  String get welcomeTitle => _get('welcomeTitle');
-  String get welcomeSub => _get('welcomeSub');
-  String get brandAlt => _get('brandAlt');
-  String get phoneLabel => _get('phoneLabel');
-  String get phoneInvalid => _get('phoneInvalid');
-  String get sendCode => _get('sendCode');
-  String get legalPrefix => _get('legalPrefix');
-  String get terms => _get('terms');
-  String get and => _get('and');
-  String get privacy => _get('privacy');
+  String stepOf(int step, int total) => stepOfLabel(n(step), n(total));
 
-  // OTP
-  String get otpTitle => _get('otpTitle');
-  String get otpSentTo => _get('otpSentTo');
-  String get editNumber => _get('editNumber');
-  String get otpLabel => _get('otpLabel');
-  String get otpWrong => _get('otpWrong');
-  String get confirm => _get('confirm');
-  String resendIn(String time) => _get('resendIn', {'t': time});
-  String get resendAsk => _get('resendAsk');
-  String get resend => _get('resend');
+  String chars(int count, int max) => charsLabel(n(count), n(max));
 
-  // Flow
-  String get back => _get('back');
-  String stepOf(int step, int total) =>
-      _get('stepOf', {'n': n(step), 'm': n(total)});
-  String get required => _get('required');
-  String get loading => _get('loading');
-  String get retry => _get('retry');
-  String get close => _get('close');
-
-  // Name
-  String get nameTitle => _get('nameTitle');
-  String get nameSub => _get('nameSub');
-  String get firstName => _get('firstName');
-  String get lastName => _get('lastName');
-  String get nameTooShort => _get('nameTooShort');
-  String get next => _get('next');
-
-  // Address
-  String get addressTitle => _get('addressTitle');
-  String get addressSub => _get('addressSub');
-  String get village => _get('village');
-  String get villagePlaceholder => _get('villagePlaceholder');
-  String get villageSheetTitle => _get('villageSheetTitle');
-  String get villageSearch => _get('villageSearch');
-  String get street => _get('street');
-  String get streetPlaceholder => _get('streetPlaceholder');
-  String get streetNeedsVillage => _get('streetNeedsVillage');
-  String streetSheetTitle(String village) =>
-      _get('streetSheetTitle', {'v': village});
-  String get streetSearch => _get('streetSearch');
-  String get landmark => _get('landmark');
-  String get landmarkPlaceholder => _get('landmarkPlaceholder');
-  String get landmarkTooShort => _get('landmarkTooShort');
-  String chars(int count, int max) =>
-      _get('chars', {'n': n(count), 'm': n(max)});
-  String get villageNotFound => _get('villageNotFound');
-  String get notServedYet => _get('notServedYet');
-  String get backToList => _get('backToList');
-  String noResults(String q) => _get('noResults', {'q': q});
-  String get letsStart => _get('letsStart');
-  String get locationsFailed => _get('locationsFailed');
-
-  // Home
-  String greeting(String name) => _get('greeting', {'name': name});
-  String get greetingNoName => _get('greetingNoName');
-  String get deliverTo => _get('deliverTo');
-  String etaBadge(String etaText) => _get('etaBadge', {'eta': etaText});
-  String get search => _get('search');
-  String get searchLabel => _get('searchLabel');
-  String get categories => _get('categories');
-  String get seeAll => _get('seeAll');
-
-  // Catalog
-  String get all => _get('all');
-  String get offers => _get('offers');
-  String get sortSuggested => _get('sortSuggested');
-  String get sortLow => _get('sortLow');
-  String get sortHigh => _get('sortHigh');
-  String get sortLabel => _get('sortLabel');
+  String discount(int percent) => discountLabel(n(percent));
 
   /// "١٥ منتج", "منتجين", "٣ منتجات" (Arabic counts the noun by number).
   String productCount(int count) {
     if (!isArabic) return count == 1 ? '1 product' : '$count products';
+    if (count == 1) return 'منتج واحد';
     if (count == 2) return 'منتجين';
     if (count >= 3 && count <= 10) return '${n(count)} منتجات';
     return '${n(count)} منتج';
@@ -118,279 +35,28 @@ class S {
 
   /// "٥٥ ج.م" / "EGP 55"; 12.5 shows as ١٢٫٥٠.
   String price(num value) {
-    final text = value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toStringAsFixed(2);
+    final text = value == value.roundToDouble() ? value.toInt().toString() : value.toStringAsFixed(2);
     return isArabic ? '${n(text.replaceAll('.', '٫'))} ج.م' : 'EGP $text';
   }
 
-  String discount(int percent) => _get('discount', {'p': n(percent)});
-  String get soldOut => _get('soldOut');
-  String get soldOutLong => _get('soldOutLong');
-  String get addToCart => _get('addToCart');
-  String get updateCart => _get('updateCart');
-  String get addedToCart => _get('addedToCart');
-  String get add => _get('add');
-  String get remove => _get('remove');
-  String get decrease => _get('decrease');
-  String get increase => _get('increase');
-  String get description => _get('description');
-  String get ingredients => _get('ingredients');
-  String get sameSection => _get('sameSection');
-  String get alternatives => _get('alternatives');
-  String get viewCart => _get('viewCart');
-  String get cartComingSoon => _get('cartComingSoon');
-  String get emptyCategory => _get('emptyCategory');
-  String get noOffers => _get('noOffers');
-  String get catalogFailed => _get('catalogFailed');
-  String get categoryGone => _get('categoryGone');
-  String get chooseCategory => _get('chooseCategory');
-  String get tabHome => _get('tabHome');
-  String get tabCategories => _get('tabCategories');
-  String get tabSearch => _get('tabSearch');
-  String get tabOrders => _get('tabOrders');
-  String get tabAccount => _get('tabAccount');
-  String get homeFailed => _get('homeFailed');
-  String get bannerDelivery => _get('bannerDelivery');
-  String get bannerBreakfast => _get('bannerBreakfast');
-  String get bannerPayment => _get('bannerPayment');
-
-  /// Maps the backend's stable error codes to friendly copy.
-  String error(String? code) => _get(switch (code) {
-    'INVALID_PHONE' => 'phoneInvalid',
-    'OTP_INVALID' => 'otpWrong',
-    'OTP_EXPIRED' => 'errOtpExpired',
-    'OTP_TOO_MANY_ATTEMPTS' => 'errOtpTooMany',
-    'OTP_RESEND_TOO_SOON' => 'errResendTooSoon',
-    'OTP_RATE_LIMITED' => 'errRateLimited',
-    'VALIDATION_ERROR' => 'errValidation',
-    'INVALID_STREET' => 'errInvalidStreet',
-    'UNAUTHORIZED' || 'TOKEN_EXPIRED' => 'errSession',
-    'NETWORK' => 'errNetwork',
-    _ => 'errGeneric',
-  });
-}
-
-const _ar = <String, String>{
-  'welcomeTitle': 'أهلًا بيك في طيران',
-  'welcomeSub': 'دخّل رقم موبايلك وهنبعتلك كود',
-  'brandAlt': 'شعار طيران',
-  'phoneLabel': 'رقم الموبايل',
-  'phoneInvalid': 'الرقم مش صحيح',
-  'sendCode': 'ابعتلي الكود',
-  'legalPrefix': 'بالدخول انت موافق على ',
-  'terms': 'الشروط',
-  'and': ' و',
-  'privacy': 'سياسة الخصوصية',
-  'otpTitle': 'دخّل الكود',
-  'otpSentTo': 'بعتناه على ',
-  'editNumber': 'تعديل الرقم',
-  'otpLabel': 'كود التأكيد',
-  'otpWrong': 'الكود غلط، جرب تاني',
-  'confirm': 'تأكيد',
-  'resendIn': 'ابعت الكود تاني خلال {t}',
-  'resendAsk': 'موصلكش الكود؟ ',
-  'resend': 'ابعت تاني',
-  'back': 'رجوع',
-  'stepOf': 'خطوة {n} من {m}',
-  'required': 'الحقل ده مطلوب',
-  'loading': 'لحظة…',
-  'retry': 'جرب تاني',
-  'close': 'اقفل',
-  'nameTitle': 'نتعرف عليك',
-  'nameSub': 'عشان الطيّار يعرف يناديك',
-  'firstName': 'الاسم الأول',
-  'lastName': 'الاسم الأخير',
-  'nameTooShort': 'اكتب حرفين على الأقل',
-  'next': 'التالي',
-  'addressTitle': 'هنوصلك فين؟',
-  'addressSub': 'اختار بلدك وشارعك واكتبلنا علامة مميزة',
-  'village': 'البلد',
-  'villagePlaceholder': 'اختار بلدك',
-  'villageSheetTitle': 'اختار بلدك',
-  'villageSearch': 'دوّر على بلدك',
-  'street': 'الشارع',
-  'streetPlaceholder': 'اختار الشارع',
-  'streetNeedsVillage': 'اختار البلد الأول',
-  'streetSheetTitle': 'شوارع {v}',
-  'streetSearch': 'دوّر على شارعك',
-  'landmark': 'علامة مميزة',
-  'landmarkPlaceholder': 'مثلًا: جنب جامع النور، البيت اللي بابه أخضر',
-  'landmarkTooShort': 'اكتب علامة أوضح شوية',
-  'chars': '{n}/{m}',
-  'villageNotFound': 'مش لاقي بلدك؟',
-  'notServedYet': 'لسه مش بنوصل هناك، بس قريب إن شاء الله',
-  'backToList': 'رجوع للقائمة',
-  'noResults': 'مفيش نتايج لـ "{q}"',
-  'letsStart': 'يلا نبدأ',
-  'locationsFailed': 'معرفناش نجيب البلاد، جرب تاني',
-  'greeting': 'أهلًا {name}',
-  'greetingNoName': 'أهلًا بيك',
-  'deliverTo': 'التوصيل إلى',
-  'etaBadge': 'التوصيل خلال {eta}',
-  'search': 'دوّر على عيش، لبن، فاكهة…',
-  'searchLabel': 'البحث',
-  'categories': 'الأقسام',
-  'seeAll': 'الكل',
-  'all': 'الكل',
-  'offers': 'عروض',
-  'sortSuggested': 'المقترح',
-  'sortLow': 'الأرخص',
-  'sortHigh': 'الأغلى',
-  'sortLabel': 'الترتيب',
-  'discount': 'خصم {p}٪',
-  'soldOut': 'خلصان',
-  'soldOutLong': 'خلص من المخزن',
-  'addToCart': 'أضف للسلة',
-  'updateCart': 'حدّث السلة',
-  'addedToCart': 'اتضافت للسلة',
-  'add': 'أضف',
-  'remove': 'شيل من السلة',
-  'decrease': 'قلّل',
-  'increase': 'زوّد',
-  'description': 'الوصف',
-  'ingredients': 'المكونات',
-  'sameSection': 'من نفس القسم',
-  'alternatives': 'بدائل متوفرة',
-  'viewCart': 'عرض السلة',
-  'cartComingSoon': 'السلة والدفع جايين في التحديث الجاي',
-  'emptyCategory': 'مفيش منتجات هنا لسه',
-  'noOffers': 'مفيش عروض في القسم ده دلوقتي',
-  'catalogFailed': 'مقدرناش نحمّل المنتجات، اتأكد من النت وجرب تاني',
-  'categoryGone': 'القسم ده مش متاح دلوقتي',
-  'chooseCategory': 'اختار قسم',
-  'tabHome': 'الرئيسية',
-  'tabCategories': 'الأقسام',
-  'tabSearch': 'البحث',
-  'tabOrders': 'طلباتي',
-  'tabAccount': 'حسابي',
-  'homeFailed': 'معرفناش نحمّل الصفحة',
-  'bannerDelivery': 'طلبك طاير لك: كل حاجات البيت، من غير ما تتحرك من مكانك',
-  'bannerBreakfast': 'فطارك في دقايق: عيش بلدي، جبنة، بيض ولبن على باب البيت',
-  'bannerPayment': 'ادفع بالفيزا أو المحفظة: آمن وسريع، أو كاش لما الطلب يوصل',
-  'errOtpExpired': 'الكود خلص وقته، اطلب كود جديد',
-  'errOtpTooMany': 'جربت كتير، اطلب كود جديد',
-  'errResendTooSoon': 'استنى شوية قبل ما تطلب كود تاني',
-  'errRateLimited': 'طلبت أكواد كتير، جرب بعد شوية',
-  'errValidation': 'راجع البيانات وجرب تاني',
-  'errInvalidStreet': 'الشارع ده مش في البلد اللي اخترتها',
-  'errSession': 'الجلسة خلصت، سجل دخول تاني',
-  'errNetwork': 'مفيش اتصال، اتأكد من النت وجرب تاني',
-  'errGeneric': 'حصلت مشكلة، جرب تاني',
-};
-
-const _en = <String, String>{
-  'welcomeTitle': 'Welcome to Tayran',
-  'welcomeSub': 'Enter your mobile number and we\'ll text you a code',
-  'brandAlt': 'Tayran logo',
-  'phoneLabel': 'Mobile number',
-  'phoneInvalid': 'That number doesn\'t look right',
-  'sendCode': 'Send me the code',
-  'legalPrefix': 'By continuing you agree to the ',
-  'terms': 'Terms',
-  'and': ' and ',
-  'privacy': 'Privacy policy',
-  'otpTitle': 'Enter the code',
-  'otpSentTo': 'We sent it to ',
-  'editNumber': 'Change number',
-  'otpLabel': 'Verification code',
-  'otpWrong': 'Wrong code, try again',
-  'confirm': 'Confirm',
-  'resendIn': 'Resend the code in {t}',
-  'resendAsk': 'Didn\'t get it? ',
-  'resend': 'Resend',
-  'back': 'Back',
-  'stepOf': 'Step {n} of {m}',
-  'required': 'This field is required',
-  'loading': 'One moment…',
-  'retry': 'Try again',
-  'close': 'Close',
-  'nameTitle': 'Let\'s get to know you',
-  'nameSub': 'So the rider knows who to ask for',
-  'firstName': 'First name',
-  'lastName': 'Last name',
-  'nameTooShort': 'Use at least 2 letters',
-  'next': 'Next',
-  'addressTitle': 'Where should we deliver?',
-  'addressSub': 'Pick your village and street, and add a landmark',
-  'village': 'Village',
-  'villagePlaceholder': 'Choose your village',
-  'villageSheetTitle': 'Choose your village',
-  'villageSearch': 'Search villages',
-  'street': 'Street',
-  'streetPlaceholder': 'Choose the street',
-  'streetNeedsVillage': 'Choose the village first',
-  'streetSheetTitle': 'Streets in {v}',
-  'streetSearch': 'Search streets',
-  'landmark': 'Landmark',
-  'landmarkPlaceholder':
-      'e.g. next to Al Nour mosque, the house with the green door',
-  'landmarkTooShort': 'Add a little more detail',
-  'chars': '{n}/{m}',
-  'villageNotFound': 'Can\'t find your village?',
-  'notServedYet': 'We don\'t deliver there yet, but soon',
-  'backToList': 'Back to the list',
-  'noResults': 'No results for "{q}"',
-  'letsStart': 'Let\'s go',
-  'locationsFailed': 'We couldn\'t load the villages, try again',
-  'greeting': 'Hi {name}',
-  'greetingNoName': 'Hi there',
-  'deliverTo': 'Deliver to',
-  'etaBadge': 'Delivery in {eta}',
-  'search': 'Search bread, milk, fruit…',
-  'searchLabel': 'Search',
-  'categories': 'Categories',
-  'seeAll': 'All',
-  'all': 'All',
-  'offers': 'Offers',
-  'sortSuggested': 'Suggested',
-  'sortLow': 'Lowest price',
-  'sortHigh': 'Highest price',
-  'sortLabel': 'Sort',
-  'discount': '{p}% off',
-  'soldOut': 'Sold out',
-  'soldOutLong': 'Out of stock',
-  'addToCart': 'Add to cart',
-  'updateCart': 'Update cart',
-  'addedToCart': 'Added to cart',
-  'add': 'Add',
-  'remove': 'Remove from cart',
-  'decrease': 'Decrease',
-  'increase': 'Increase',
-  'description': 'Description',
-  'ingredients': 'Ingredients',
-  'sameSection': 'From the same aisle',
-  'alternatives': 'In-stock alternatives',
-  'viewCart': 'View cart',
-  'cartComingSoon': 'Cart and checkout arrive in the next update',
-  'emptyCategory': 'No products here yet',
-  'noOffers': 'No offers in this category right now',
-  'catalogFailed':
-      'Couldn’t load the products. Check your connection and try again',
-  'categoryGone': 'This category isn’t available right now',
-  'chooseCategory': 'Choose a category',
-  'tabHome': 'Home',
-  'tabCategories': 'Categories',
-  'tabSearch': 'Search',
-  'tabOrders': 'Orders',
-  'tabAccount': 'Account',
-  'homeFailed': 'We couldn\'t load this page',
-  'bannerDelivery':
-      'Your order flies to you: everything for home, without leaving it',
-  'bannerBreakfast':
-      'Breakfast in minutes: baladi bread, cheese, eggs and milk at your door',
-  'bannerPayment': 'Pay by Visa or wallet: safe and fast, or cash on delivery',
-  'errOtpExpired': 'The code has expired, request a new one',
-  'errOtpTooMany': 'Too many tries, request a new code',
-  'errResendTooSoon': 'Please wait a moment before asking again',
-  'errRateLimited': 'Too many codes requested, try again later',
-  'errValidation': 'Check your details and try again',
-  'errInvalidStreet': 'That street isn\'t in the village you chose',
-  'errSession': 'Your session ended, sign in again',
-  'errNetwork': 'No connection, check your internet and try again',
-  'errGeneric': 'Something went wrong, try again',
-};
-
-extension StringsContext on BuildContext {
-  S get s => S.of(this);
+  /// The message for a backend error code.
+  String error(String? code) => switch (code) {
+        'INVALID_PHONE' => phoneInvalid,
+        'OTP_INVALID' => otpWrong,
+        'OTP_EXPIRED' => errOtpExpired,
+        'OTP_TOO_MANY_ATTEMPTS' => errOtpTooMany,
+        'OTP_RESEND_TOO_SOON' => errResendTooSoon,
+        'OTP_RATE_LIMITED' => errRateLimited,
+        'VALIDATION_ERROR' => errValidation,
+        'INVALID_STREET' => errInvalidStreet,
+        'UNAUTHORIZED' || 'TOKEN_EXPIRED' => errSession,
+        'NETWORK' => errNetwork,
+        'MIN_ORDER_NOT_MET' => errMinOrder,
+        'PAYMENT_METHOD_NOT_AVAILABLE' => errPaymentUnavailable,
+        'ORDER_STATE_CHANGED' => errOrderState,
+        'LAST_ADDRESS' => errLastAddress,
+        'INVALID_ADDRESS' => errInvalidAddress,
+        'EMPTY_ORDER' => errEmptyOrder,
+        _ => errGeneric,
+      };
 }

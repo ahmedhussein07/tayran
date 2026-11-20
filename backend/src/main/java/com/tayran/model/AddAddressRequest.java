@@ -18,4 +18,12 @@ public class AddAddressRequest {
 
     @TrimmedSize(min = 5, max = 150)
     private String landmark;
+
+    /** Optional name for the address, e.g. "home". */
+    @jakarta.validation.constraints.Size(max = 30, message = TayranConst.VALIDATION_ERROR)
+    private String label;
+
+    public AddAddressRequest(Long villageId, Long streetId, String landmark) {
+        this(villageId, streetId, landmark, null);
+    }
 }

@@ -43,11 +43,19 @@ public class BootstrapServiceImpl implements BootstrapService {
     private final StorageProperties storageProperties;
     private final ImageTemplates imageTemplates;
     private final LoadingCache<Long, StorePart> storeParts;
+    private final StoreSettingsService settingsService;
+    private final com.tayran.service.OrderService orderService;
+    private final boolean onlinePaymentEnabled;
 
     public BootstrapServiceImpl(UserRepository userRepository, AddressRepository addressRepository,
                                 CategoryRepository categoryRepository, StoreRepository storeRepository,
                                 NextStepResolver nextStepResolver, StorageProperties storageProperties,
-                                AppProperties appProperties) {
+                                AppProperties appProperties, StoreSettingsService settingsService,
+                                com.tayran.service.OrderService orderService,
+                                @org.springframework.beans.factory.annotation.Value("${payments.online.enabled:false}") boolean onlinePaymentEnabled) {
+        this.settingsService = settingsService;
+        this.orderService = orderService;
+        this.onlinePaymentEnabled = onlinePaymentEnabled;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.categoryRepository = categoryRepository;
@@ -71,15 +79,31 @@ public class BootstrapServiceImpl implements BootstrapService {
         Optional<Address> address = addressRepository.findDefaultWithLocation(userId);
         long storeId = address.map(a -> a.getVillage().getStoreId()).orElse(CatalogChanges.DEFAULT_STORE_ID);
         StorePart store = storeParts.get(storeId);
+        var settings = settingsService.get(storeId);
         return new BootstrapResponse(
                 nextStepResolver.resolve(user, address.isPresent()),
                 user.getFirstName(),
+                user.getLastName(),
+                user.getPhone(),
+                user.getPreferredLanguage(),
                 address.map(AddressDto::of).orElse(null),
-                TayranConst.ETA_TEXT,
-                TayranConst.ETA_MINUTES,
+                arabicDigits(settings.getEtaMinutes()) + " دقيقة",
+                settings.getEtaMinutes(),
                 store.categories(),
                 store.catalog(),
-                imageTemplates);
+                imageTemplates,
+                StoreSettingsService.StoreSettingsDto.of(settings),
+                addressRepository.findLive(userId).stream().map(com.tayran.model.ProfileDtos.SavedAddressDto::of).toList(),
+                orderService.active(userId),
+                onlinePaymentEnabled);
+    }
+
+    private static String arabicDigits(int value) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : String.valueOf(value).toCharArray()) {
+            sb.append((char) ('٠' + (c - '0')));
+        }
+        return sb.toString();
     }
 
     @EventListener

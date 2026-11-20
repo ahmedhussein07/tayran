@@ -12,10 +12,6 @@ public final class TayranConst {
     public static final String LOGIN_SUCCESSFULLY = "Logged in successfully";
     public static final String LOGIN_SUCCESSFULLY_AR = "تم تسجيل الدخول بنجاح";
 
-    /** Static for now; replaced by the store's real estimate later. */
-    public static final String ETA_TEXT = "٢٠ دقيقة";
-    public static final int ETA_MINUTES = 20;
-
     public static final String ROLE_CUSTOMER = "CUSTOMER";
 
     // Stable error codes. Each one has an entry in files/error-map.json.
@@ -51,4 +47,16 @@ public final class TayranConst {
     public static final String IMAGE_TOO_LARGE = "IMAGE_TOO_LARGE";
     public static final String IMAGE_DIMENSIONS_TOO_LARGE = "IMAGE_DIMENSIONS_TOO_LARGE";
     public static final String IMAGE_UNREADABLE = "IMAGE_UNREADABLE";
+
+    // Orders
+    public static final String CART_CHANGED = "CART_CHANGED";
+    public static final String MIN_ORDER_NOT_MET = "MIN_ORDER_NOT_MET";
+    public static final String PAYMENT_METHOD_NOT_AVAILABLE = "PAYMENT_METHOD_NOT_AVAILABLE";
+    public static final String IDEMPOTENCY_KEY_REQUIRED = "IDEMPOTENCY_KEY_REQUIRED";
+    public static final String ORDER_STATE_CHANGED = "ORDER_STATE_CHANGED";
+    public static final String INVALID_ADDRESS = "INVALID_ADDRESS";
+    public static final String LAST_ADDRESS = "LAST_ADDRESS";
+    public static final String REPLACEMENT_NOT_ALLOWED = "REPLACEMENT_NOT_ALLOWED";
+    public static final String EMPTY_ORDER = "EMPTY_ORDER";
+    public static final String INVALID_COURIER_PHONE = "INVALID_COURIER_PHONE";
 }

@@ -47,7 +47,9 @@ import java.util.concurrent.ConcurrentHashMap;
         "admin.seed-password=" + IntegrationTestBase.ADMIN_PASSWORD,
         "admin.ip-max-attempts=100000",
         // The publisher is driven by the tests, not by the schedule.
-        "app.catalog-publish-interval=1h"
+        "app.catalog-publish-interval=1h",
+        // No real Firebase in tests: the recording sender below takes its place.
+        "firebase.service-account-file=target/no-such-firebase-file.json"
 })
 public abstract class IntegrationTestBase {
 
@@ -83,6 +85,35 @@ public abstract class IntegrationTestBase {
         CapturingOtpSender capturingOtpSender() {
             return new CapturingOtpSender();
         }
+
+        @Bean
+        @Primary
+        RecordingPushSender recordingPushSender() {
+            return new RecordingPushSender();
+        }
+    }
+
+    /** Records pushes; can be told to fail or to report tokens as invalid. */
+    static class RecordingPushSender implements com.tayran.integration.push.PushSender {
+        record Sent(java.util.List<String> tokens, PushMessage message) {
+        }
+
+        final java.util.List<Sent> sent = new java.util.concurrent.CopyOnWriteArrayList<>();
+        volatile boolean fail;
+        final java.util.Set<String> invalidTokens = ConcurrentHashMap.newKeySet();
+
+        @Override
+        public java.util.List<String> send(java.util.List<String> tokens, PushMessage message) {
+            if (fail) {
+                throw new IllegalStateException("push service down (test)");
+            }
+            sent.add(new Sent(java.util.List.copyOf(tokens), message));
+            return tokens.stream().filter(invalidTokens::contains).toList();
+        }
+
+        java.util.List<Sent> forOrder(long orderId) {
+            return sent.stream().filter(s -> String.valueOf(orderId).equals(s.message().data().get("orderId"))).toList();
+        }
     }
 
     static class CapturingOtpSender implements OtpSender {
@@ -100,6 +131,8 @@ public abstract class IntegrationTestBase {
     ObjectMapper objectMapper;
     @Autowired
     CapturingOtpSender otpSender;
+    @Autowired
+    RecordingPushSender pushSender;
 
     final HttpClient http = HttpClient.newHttpClient();
 

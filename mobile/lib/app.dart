@@ -6,6 +6,9 @@ import 'package:flutter_localizations/flutter_localizations.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tayran_ui/tayran_ui.dart';
 
+import 'core/l10n/strings.dart';
+import 'core/prefs/app_prefs.dart';
+import 'core/push/push_service.dart';
 import 'core/router/app_router.dart';
 import 'core/session/session.dart';
 import 'core/session/session_controller.dart';
@@ -30,6 +33,12 @@ class _TayranAppState extends ConsumerState<TayranApp> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _onResume);
+    // Pushes follow the session: start once signed up, forget the device on sign-out.
+    ref.listenManual(sessionControllerProvider, (_, next) {
+      final push = ref.read(pushServiceProvider);
+      if (next is AuthSignedIn && next.session.nextStep == NextStep.home) push.start();
+      if (next is AuthSignedOut) push.forget();
+    }, fireImmediately: true);
   }
 
   @override
@@ -51,21 +60,24 @@ class _TayranAppState extends ConsumerState<TayranApp> {
 
   @override
   Widget build(BuildContext context) {
+    final prefs = ref.watch(appPrefsProvider);
     return MaterialApp.router(
       title: 'طيران',
+      scaffoldMessengerKey: rootMessengerKey,
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(routerProvider),
-      // Arabic (RTL) first. English is supported by the strings and layout; no switcher yet.
-      locale: const Locale('ar', 'EG'),
+      // Arabic (RTL) first; English from the profile. Changing it switches text and direction at once.
+      locale: prefs.locale,
       supportedLocales: const [Locale('ar', 'EG'), Locale('en')],
       localizationsDelegates: const [
+        S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: prefs.themeMode,
     );
   }
 }

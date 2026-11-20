@@ -20,6 +20,7 @@ dependencies:
   material_ui: ^1.11.1
   tayran_ui:
     path: ../packages/tayran_ui
+  web: ^1.1.2
 
 dev_dependencies:
   flutter_test:

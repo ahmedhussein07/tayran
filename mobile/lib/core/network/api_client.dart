@@ -35,13 +35,16 @@ class ApiClient {
   Future<dynamic> get(String path, {bool auth = true}) =>
       _send(() => _dio.get(path, options: _opts(auth)));
 
-  Future<dynamic> post(String path, Object? body, {bool auth = true}) =>
-      _send(() => _dio.post(path, data: body, options: _opts(auth)));
+  Future<dynamic> post(String path, Object? body, {bool auth = true, Map<String, String>? headers}) =>
+      _send(() => _dio.post(path, data: body, options: _opts(auth, headers)));
 
   Future<dynamic> put(String path, Object? body, {bool auth = true}) =>
       _send(() => _dio.put(path, data: body, options: _opts(auth)));
 
-  Options _opts(bool auth) => Options(extra: {AuthInterceptor.authKey: auth});
+  Future<dynamic> delete(String path, {bool auth = true}) => _send(() => _dio.delete(path, options: _opts(auth)));
+
+  Options _opts(bool auth, [Map<String, String>? headers]) =>
+      Options(extra: {AuthInterceptor.authKey: auth}, headers: headers);
 
   Future<dynamic> _send(Future<Response<dynamic>> Function() call) async {
     try {

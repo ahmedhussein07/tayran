@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#FA7400</color>
+    <!-- The tint of order notifications (the design's brand orange). -->
+    <color name="tayran_brand">#F77F00</color>
 </resources>

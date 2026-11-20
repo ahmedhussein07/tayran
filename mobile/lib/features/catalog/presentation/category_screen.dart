@@ -126,9 +126,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
         backgroundColor: c.surface,
         bottomNavigationBar: TayranTabBar(
           active: HomeTab.categories,
-          onChanged: (tab) {
-            if (tab == HomeTab.home) context.go(Routes.home);
-          },
+          onChanged: (tab) => goToTab(context, tab),
         ),
         body: Column(
           children: [
@@ -288,9 +286,7 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen> {
             child: CartBar(
               count: summary.count,
               total: summary.total,
-              onTap: () => ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(SnackBar(content: Text(s.cartComingSoon))),
+              onTap: () => context.push(Routes.cart),
             ),
           ),
       ],

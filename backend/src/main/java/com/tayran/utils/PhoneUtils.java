@@ -34,7 +34,7 @@ public final class PhoneUtils {
     }
 
     /** Accepts Arabic-Indic (٠-٩) and Eastern Arabic-Indic (۰-۹) digits too. */
-    private static String toWesternDigits(String value) {
+    public static String toWesternDigits(String value) {
         StringBuilder sb = new StringBuilder(value.length());
         for (char c : value.toCharArray()) {
             if (c >= '٠' && c <= '٩') {
